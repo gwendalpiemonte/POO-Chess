@@ -15,11 +15,7 @@ public class ChessGame implements ChessController {
 
     private ChessView view;
 
-    private final Piece[][] board;
-
-    public ChessGame() {
-        board = new Piece[8][8];
-    }
+    private Board board;
 
     @Override
     public void start(ChessView view) {
@@ -79,14 +75,16 @@ public class ChessGame implements ChessController {
 
     @Override
     public void newGame() {
-        board[0][4] = new King(PlayerColor.WHITE);
+        board = new Board();
 
-        for (int y = 0; y < 8; y++) {
-            for (int x = 0; x < 8; x++) {
-                Piece piece = board[y][x];
+        board.put(new King(PlayerColor.WHITE), 0, 4);
+
+        for (int file = 0; file < 8; file++) {
+            for (int rank = 0; rank < 8; rank++) {
+                Piece piece = board.at(file, rank);
 
                 if (piece != null) {
-                    view.putPiece(piece.getType(), piece.getColor(), x, y);
+                    view.putPiece(piece.getType(), piece.getColor(), rank, file);
                 }
             }
         }
