@@ -1,6 +1,7 @@
 package engine.piece;
 
 import engine.Board;
+import engine.Position;
 import engine.utils.CoordinateUtils;
 import engine.utils.FenUtils;
 
@@ -22,13 +23,10 @@ public class AbstractPieceTest {
     public boolean isMoveValid(String boardDef, String piece, String target) {
         Board board = FenUtils.load(boardDef);
 
-        int pieceFile = CoordinateUtils.charCoordinateToIndex(piece.charAt(0));
-        int pieceRank = CoordinateUtils.intCoordinateToIndex(piece.charAt(1));
+        Position piecePos = CoordinateUtils.fromString(piece);
+        Position targetPos = CoordinateUtils.fromString(target);
 
-        int targetFile = CoordinateUtils.charCoordinateToIndex(target.charAt(0));
-        int targetRank = CoordinateUtils.intCoordinateToIndex(target.charAt(1));
-
-        return board.at(pieceFile, pieceRank)
-                .isMoveValid(board, pieceFile, pieceRank, targetFile, targetRank);
+        return board.at(piecePos.file(), piecePos.rank())
+                .isMoveValid(board, piecePos, targetPos);
     }
 }
