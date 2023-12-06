@@ -1,4 +1,4 @@
-package engine;
+package engine.piece;
 
 import chess.PieceType;
 import chess.PlayerColor;
