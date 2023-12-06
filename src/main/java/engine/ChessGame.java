@@ -21,6 +21,10 @@ public class ChessGame implements ChessController {
         return false; // TODO
     }
 
+    public void loadFenNotation(String notation) {
+        //
+    }
+
     @Override
     public void newGame() {
         view.displayMessage("new game (TO REMOVE)"); // TODO
