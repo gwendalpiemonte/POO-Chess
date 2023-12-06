@@ -13,7 +13,7 @@ public abstract class Piece {
 
     public abstract PieceType getType();
 
-    public abstract boolean isValidMove(int col, int row);
+    public abstract boolean isMoveValid(int col, int row);
 
     public PlayerColor getColor() {
         return color;

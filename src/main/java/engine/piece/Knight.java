@@ -14,7 +14,7 @@ public class Knight extends Piece {
     }
 
     @Override
-    public boolean isValidMove(int col, int row) {
+    public boolean isMoveValid(int col, int row) {
         return false;
     }
 }
