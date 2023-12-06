@@ -17,6 +17,12 @@ public class Knight extends Piece {
 
     @Override
     public boolean isMoveValid(Board board, Position from, Position to) {
-        return false;
+        int rankDistance = to.rank() - from.rank();
+        int fileDistance = to.file() - from.file();
+
+        int absRankDistance = Math.abs(rankDistance);
+        int absFileDistance = Math.abs(fileDistance);
+
+        return (absRankDistance == 2 && absFileDistance == 1) || (absRankDistance == 1 && absFileDistance == 2);
     }
 }
