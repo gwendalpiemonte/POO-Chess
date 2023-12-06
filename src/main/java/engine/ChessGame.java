@@ -27,7 +27,30 @@ public class ChessGame implements ChessController {
 
     @Override
     public void newGame() {
-        view.displayMessage("new game (TO REMOVE)"); // TODO
-        view.putPiece(PieceType.KING, PlayerColor.BLACK, 3, 4); // TODO exemple uniquement
+        view.putPiece(PieceType.KING, PlayerColor.WHITE, 4, 0); // TODO exemple uniquement
+        view.putPiece(PieceType.QUEEN, PlayerColor.WHITE, 3, 0); // TODO exemple uniquement
+        view.putPiece(PieceType.BISHOP, PlayerColor.WHITE, 5, 0); // TODO exemple uniquement
+        view.putPiece(PieceType.BISHOP, PlayerColor.WHITE, 2, 0); // TODO exemple uniquement
+        view.putPiece(PieceType.KNIGHT, PlayerColor.WHITE, 1, 0); // TODO exemple uniquement
+        view.putPiece(PieceType.KNIGHT, PlayerColor.WHITE, 6, 0); // TODO exemple uniquement
+        view.putPiece(PieceType.ROOK, PlayerColor.WHITE, 7, 0); // TODO exemple uniquement
+        view.putPiece(PieceType.ROOK, PlayerColor.WHITE, 0, 0); // TODO exemple uniquement
+
+        view.putPiece(PieceType.KING, PlayerColor.BLACK, 4, 7); // TODO exemple uniquement
+        view.putPiece(PieceType.QUEEN, PlayerColor.BLACK, 3, 7); // TODO exemple uniquement
+        view.putPiece(PieceType.BISHOP, PlayerColor.BLACK, 5, 7); // TODO exemple uniquement
+        view.putPiece(PieceType.BISHOP, PlayerColor.BLACK, 2, 7); // TODO exemple uniquement
+        view.putPiece(PieceType.KNIGHT, PlayerColor.BLACK, 1, 7); // TODO exemple uniquement
+        view.putPiece(PieceType.KNIGHT, PlayerColor.BLACK, 6, 7); // TODO exemple uniquement
+        view.putPiece(PieceType.ROOK, PlayerColor.BLACK, 7, 7); // TODO exemple uniquement
+        view.putPiece(PieceType.ROOK, PlayerColor.BLACK, 0, 7); // TODO exemple uniquement
+
+        for(int i = 0; i<8; ++i){
+            view.putPiece(PieceType.PAWN, PlayerColor.WHITE, i, 1); // TODO exemple uniquement
+        }
+
+        for(int i = 0; i<8; ++i){
+            view.putPiece(PieceType.PAWN, PlayerColor.BLACK, i, 6); // TODO exemple uniquement
+        }
     }
 }
