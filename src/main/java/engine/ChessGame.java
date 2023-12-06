@@ -4,10 +4,18 @@ import chess.ChessController;
 import chess.ChessView;
 import chess.PieceType;
 import chess.PlayerColor;
+import engine.piece.King;
+import engine.piece.Piece;
 
 public class ChessGame implements ChessController {
 
     private ChessView view;
+
+    private final Piece[][] board;
+
+    public ChessGame() {
+        board = new Piece[8][8];
+    }
 
     @Override
     public void start(ChessView view) {
@@ -27,7 +35,19 @@ public class ChessGame implements ChessController {
 
     @Override
     public void newGame() {
-        view.putPiece(PieceType.KING, PlayerColor.WHITE, 4, 0); // TODO exemple uniquement
+        board[0][4] = new King(PlayerColor.WHITE);
+
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                Piece piece = board[y][x];
+
+                if (piece != null) {
+                    view.putPiece(piece.getType(), piece.getColor(), x, y);
+                }
+            }
+        }
+
+        // view.putPiece(PieceType.KING, PlayerColor.WHITE, 4, 0); // TODO exemple uniquement
         view.putPiece(PieceType.QUEEN, PlayerColor.WHITE, 3, 0); // TODO exemple uniquement
         view.putPiece(PieceType.BISHOP, PlayerColor.WHITE, 5, 0); // TODO exemple uniquement
         view.putPiece(PieceType.BISHOP, PlayerColor.WHITE, 2, 0); // TODO exemple uniquement
