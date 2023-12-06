@@ -3,6 +3,7 @@ package engine.piece;
 import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
+import engine.Position;
 
 public class Bishop extends Piece {
     public Bishop(PlayerColor color) {
@@ -15,7 +16,7 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public boolean isMoveValid(Board board, int fromRank, int fromFile, int toRank, int toFile) {
+    public boolean isMoveValid(Board board,  Position from, Position to) {
         return false;
     }
 }
