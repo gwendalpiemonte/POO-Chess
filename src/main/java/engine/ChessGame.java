@@ -11,6 +11,7 @@ import java.io.Reader;
 import java.io.StringReader;
 
 public class ChessGame implements ChessController {
+    static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     private PlayerColor currentPlayer;
 
     private ChessView view;
@@ -29,91 +30,57 @@ public class ChessGame implements ChessController {
         return false; // TODO
     }
 
-    public void loadFenNotation(String notation) throws IOException {
+    public void loadFenNotation(String notation) {
         // The FEN notation (as described in https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)
         Reader reader = new StringReader(notation);
         // The fen notation starts with 8.
         int currentRank = 7;
-        int currentColumn = 0;
+        int currentFile = 0;
         int currentChar;
-        while ((currentChar = reader.read()) != ' ') {
-            if (currentChar == '/') {
-                currentRank--;
-                currentColumn = 0;
-            } else if (Character.isDigit(currentChar)) {
-                int value = currentChar - '0';
-                if ((value + currentColumn) > 8) {
-                    throw new IllegalArgumentException("The FEN notation is invalid.");
+        try {
+            while ((currentChar = reader.read()) != ' ') {
+                if (currentChar == '/') {
+                    currentRank--;
+                    currentFile = 0;
+                } else if (Character.isDigit(currentChar)) {
+                    int value = currentChar - '0';
+                    if ((value + currentFile) > 8) {
+                        throw new RuntimeException("The FEN notation is invalid.");
+                    }
+
+                    currentFile += value;
+                } else {
+                    PlayerColor color = Character.isUpperCase(currentChar) ? PlayerColor.WHITE : PlayerColor.BLACK;
+                    Piece piece = switch (Character.toLowerCase(currentChar)) {
+                        case 'p' -> new Pawn(color);
+                        case 'n' -> new Knight(color);
+                        case 'b' -> new Bishop(color);
+                        case 'r' -> new Rook(color);
+                        case 'q' -> new Queen(color);
+                        case 'k' -> new King(color);
+                        default -> throw new RuntimeException("The FEN notation is invalid");
+                    };
+
+                    view.putPiece(piece.getType(), piece.getColor(), currentFile, currentRank);
+
+                    currentFile++;
                 }
-
-                currentColumn += value;
-            } else {
-                PlayerColor color = Character.isUpperCase(currentChar) ? PlayerColor.WHITE : PlayerColor.BLACK;
-                Piece piece = switch (Character.toLowerCase(currentChar)) {
-                    case 'p' -> new Pawn(color);
-                    case 'n' -> new Knight(color);
-                    case 'b' -> new Bishop(color);
-                    case 'r' -> new Rook(color);
-                    case 'q' -> new Queen(color);
-                    case 'k' -> new King(color);
-                    default -> throw new RuntimeException("The FEN notation is invalid");
-                };
-
-                view.putPiece(piece.getType(), piece.getColor(), currentRank, currentColumn);
-
-                currentColumn++;
             }
+
+            currentChar = reader.read();
+            // We skipped the space
+            currentPlayer = currentChar == 'w' ? PlayerColor.WHITE : PlayerColor.BLACK;
+
+            // For now, we ignore the rest.
+        } catch (IOException e) {
+            throw new RuntimeException("The FEN notation is invalid", e);
         }
-
-        currentChar = reader.read();
-        // We skipped the space
-        currentPlayer = currentChar == 'w' ? PlayerColor.WHITE : PlayerColor.BLACK;
-
-        // For now, we ignore the rest.
     }
 
 
     @Override
     public void newGame() {
-        board = new Board();
-
-        board.put(new King(PlayerColor.WHITE), 0, 4);
-
-        for (int file = 0; file < 8; file++) {
-            for (int rank = 0; rank < 8; rank++) {
-                Piece piece = board.at(file, rank);
-
-                if (piece != null) {
-                    view.putPiece(piece.getType(), piece.getColor(), rank, file);
-                }
-            }
-        }
-
-        // view.putPiece(PieceType.KING, PlayerColor.WHITE, 4, 0); // TODO exemple uniquement
-        view.putPiece(PieceType.QUEEN, PlayerColor.WHITE, 3, 0); // TODO exemple uniquement
-        view.putPiece(PieceType.BISHOP, PlayerColor.WHITE, 5, 0); // TODO exemple uniquement
-        view.putPiece(PieceType.BISHOP, PlayerColor.WHITE, 2, 0); // TODO exemple uniquement
-        view.putPiece(PieceType.KNIGHT, PlayerColor.WHITE, 1, 0); // TODO exemple uniquement
-        view.putPiece(PieceType.KNIGHT, PlayerColor.WHITE, 6, 0); // TODO exemple uniquement
-        view.putPiece(PieceType.ROOK, PlayerColor.WHITE, 7, 0); // TODO exemple uniquement
-        view.putPiece(PieceType.ROOK, PlayerColor.WHITE, 0, 0); // TODO exemple uniquement
-
-        view.putPiece(PieceType.KING, PlayerColor.BLACK, 4, 7); // TODO exemple uniquement
-        view.putPiece(PieceType.QUEEN, PlayerColor.BLACK, 3, 7); // TODO exemple uniquement
-        view.putPiece(PieceType.BISHOP, PlayerColor.BLACK, 5, 7); // TODO exemple uniquement
-        view.putPiece(PieceType.BISHOP, PlayerColor.BLACK, 2, 7); // TODO exemple uniquement
-        view.putPiece(PieceType.KNIGHT, PlayerColor.BLACK, 1, 7); // TODO exemple uniquement
-        view.putPiece(PieceType.KNIGHT, PlayerColor.BLACK, 6, 7); // TODO exemple uniquement
-        view.putPiece(PieceType.ROOK, PlayerColor.BLACK, 7, 7); // TODO exemple uniquement
-        view.putPiece(PieceType.ROOK, PlayerColor.BLACK, 0, 7); // TODO exemple uniquement
-
-        for(int i = 0; i<8; ++i){
-            view.putPiece(PieceType.PAWN, PlayerColor.WHITE, i, 1); // TODO exemple uniquement
-        }
-
-        for(int i = 0; i<8; ++i){
-            view.putPiece(PieceType.PAWN, PlayerColor.BLACK, i, 6); // TODO exemple uniquement
-        }
+        loadFenNotation(START_BOARD_FEN);
     }
 
     public PlayerColor getCurrentPlayer() {
