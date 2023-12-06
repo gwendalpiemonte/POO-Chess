@@ -23,14 +23,11 @@ public class Pawn extends Piece {
             return false;
         }
 
-        int distance = to.rank() - from.rank();
-        if (distance < 0 && getColor() == PlayerColor.WHITE) {
-            return false;
-        }
-        if (distance > 0 && getColor() == PlayerColor.BLACK) {
+        if (!isDirectionValid(from, to)) {
             return false;
         }
 
+        int distance = to.rank() - from.rank();
         int absDistance = Math.abs(distance);
 
         boolean isTargetSquareFree = board.at(from.file(), from.rank() + distance) == null;
@@ -44,6 +41,13 @@ public class Pawn extends Piece {
         }
 
         return false;
+    }
+
+    private boolean isDirectionValid(Position from, Position to) {
+        return switch (getColor()) {
+            case BLACK -> to.rank() < from.rank();
+            case WHITE -> to.rank() > from.rank();
+        };
     }
 
     private boolean isDeveloped(Position from) {
