@@ -1,5 +1,6 @@
 package engine;
 
+import chess.PlayerColor;
 import engine.piece.Piece;
 
 /**
@@ -7,6 +8,8 @@ import engine.piece.Piece;
  */
 public class Board {
     private final Piece[][] board;
+
+    private PlayerColor currentPlayer;
 
     public Board() {
         board = new Piece[8][8];
@@ -34,5 +37,13 @@ public class Board {
      */
     public void put(Piece piece, int file, int rank) {
         board[file][rank] = piece;
+    }
+
+    public PlayerColor getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(PlayerColor currentPlayer) {
+        this.currentPlayer = currentPlayer;
     }
 }
