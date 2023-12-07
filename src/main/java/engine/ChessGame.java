@@ -23,6 +23,24 @@ public class ChessGame implements ChessController {
     @Override
     public boolean move(int fromX, int fromY, int toX, int toY) {
         System.out.println(String.format("TO REMOVE : from (%d, %d) to (%d, %d)", fromX, fromY, toX, toY)); // TODO remove
+
+        Position from = new Position(fromX, fromY);
+        Position to = new Position(toX, toY);
+        Piece piece = board.at(from);
+
+        if (piece == null) {
+            return false;
+        }
+
+        if (piece.isMoveValid(board, from, to)) {
+            board.put(piece, to.file(), to.rank());
+            board.remove(from.file(), from.rank());
+
+            view.removePiece(from.file(), from.rank());
+            view.putPiece(piece.getType(), piece.getColor(), to.file(), to.rank());
+            return true;
+        }
+
         return false; // TODO
     }
 
