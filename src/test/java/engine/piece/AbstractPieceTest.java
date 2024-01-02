@@ -2,7 +2,7 @@ package engine.piece;
 
 import engine.Board;
 import engine.Position;
-import engine.temp.Move;
+import engine.move.Move;
 import engine.utils.CoordinateUtils;
 import engine.utils.FenUtils;
 

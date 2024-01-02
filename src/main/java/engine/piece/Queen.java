@@ -4,9 +4,9 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
-import engine.move.DiagonalMove;
-import engine.move.OrthogonalMove;
-import engine.temp.Move;
+import engine.move.check.DiagonalMove;
+import engine.move.check.OrthogonalMove;
+import engine.move.Move;
 
 public class Queen extends Piece {
     public Queen(PlayerColor color) {

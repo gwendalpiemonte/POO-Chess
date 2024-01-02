@@ -4,7 +4,7 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
-import engine.temp.Move;
+import engine.move.Move;
 
 public abstract class Piece {
     // We go under the assumption that there is no way a piece can change color.

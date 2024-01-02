@@ -4,9 +4,9 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
-import engine.temp.EnPassantMove;
-import engine.temp.Move;
-import engine.temp.PromotionMove;
+import engine.move.EnPassantMove;
+import engine.move.Move;
+import engine.move.PromotionMove;
 
 import static java.lang.Math.abs;
 

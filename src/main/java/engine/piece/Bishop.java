@@ -4,8 +4,8 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
-import engine.move.DiagonalMove;
-import engine.temp.Move;
+import engine.move.check.DiagonalMove;
+import engine.move.Move;
 
 public class Bishop extends Piece {
     public Bishop(PlayerColor color) {

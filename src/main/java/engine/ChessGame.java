@@ -6,8 +6,8 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.piece.*;
 import engine.promotion.*;
-import engine.temp.Move;
-import engine.temp.PromotionMove;
+import engine.move.Move;
+import engine.move.PromotionMove;
 import engine.utils.FenUtils;
 
 public class ChessGame implements ChessController {

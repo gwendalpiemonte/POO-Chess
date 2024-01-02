@@ -4,8 +4,8 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
-import engine.temp.CastlingMove;
-import engine.temp.Move;
+import engine.move.CastlingMove;
+import engine.move.Move;
 
 public class King extends Piece {
 

@@ -1,4 +1,4 @@
-package engine.move;
+package engine.move.check;
 
 import engine.Board;
 import engine.Position;

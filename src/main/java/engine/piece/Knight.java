@@ -4,7 +4,7 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
-import engine.temp.Move;
+import engine.move.Move;
 
 public class Knight extends Piece {
     public Knight(PlayerColor color) {
