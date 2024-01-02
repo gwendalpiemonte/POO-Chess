@@ -38,11 +38,6 @@ public class King extends Piece {
             return Move.illegal();
         }
 
-        if (!board.getAttackersForPosition(getColor(), to).isEmpty()) {
-            // We cannot move here, as there is someone that attacks this cell
-            return Move.illegal();
-        }
-
         boolean isKingSideCastle = fileDistance == -2;
         int rookFile = isKingSideCastle ? 7 : 0;
         if (!hasMoved && Math.abs(fileDistance) == 2 && board.at(rookFile, getColor() == PlayerColor.WHITE ? 7 : 0) instanceof Rook rook && !rook.getHasMoved()) {
@@ -61,6 +56,11 @@ public class King extends Piece {
         }
 
         if (Math.abs(rankDistance) > 1 || Math.abs(fileDistance) > 1) {
+            return Move.illegal();
+        }
+
+        if (!board.getAttackersForPosition(getColor(), to).isEmpty()) {
+            // We cannot move here, as there is someone that attacks this cell
             return Move.illegal();
         }
 

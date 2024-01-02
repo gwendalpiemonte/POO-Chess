@@ -40,4 +40,13 @@ public class KingTest extends AbstractPieceTest {
     void testCannotMoveToCheckAfterMove() {
         assertMoveInvalid("8/4k3/8/4r3/8/8/4K3/8 w - - 0 1", "e2", "e1");
     }
+
+    @Test
+    void testCannotMoveToCheckAfterMoveWithKing() {
+        assertMoveInvalid("8/8/8/8/8/k7/8/K7 w - - 0 1", "a1", "a2");
+        assertMoveInvalid("8/8/8/8/8/k7/8/K7 w - - 0 1", "a1", "b2");
+
+        assertMoveValid("8/8/8/8/8/k7/8/K7 w - - 0 1", "a1", "b1");
+    }
+
 }
