@@ -9,10 +9,11 @@ import engine.piece.Piece;
 public class Board {
     private final Piece[][] board;
 
-    private PlayerColor currentPlayer;
+    private PlayerColor currentPlayerColor;
 
     public Board() {
         board = new Piece[8][8];
+        currentPlayerColor = PlayerColor.WHITE;
     }
 
     /**
@@ -59,11 +60,16 @@ public class Board {
        put(null, file, rank);
     }
 
-    public PlayerColor getCurrentPlayer() {
-        return currentPlayer;
+    public PlayerColor getCurrentPlayerColor() {
+        return currentPlayerColor;
     }
 
-    public void setCurrentPlayer(PlayerColor currentPlayer) {
-        this.currentPlayer = currentPlayer;
+    /**
+     * TODO: This might be removed, we can swap the player color once a move is performed
+     *
+     * @param currentPlayerColor
+     */
+    public void setCurrentPlayerColor(PlayerColor currentPlayerColor) {
+        this.currentPlayerColor = currentPlayerColor;
     }
 }

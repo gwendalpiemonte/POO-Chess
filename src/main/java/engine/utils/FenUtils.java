@@ -10,7 +10,8 @@ import java.io.StringReader;
 
 // The FEN notation (as described in https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)
 public class FenUtils {
-    private FenUtils() {}
+    private FenUtils() {
+    }
 
     public static Board load(String notation) {
         Board board = new Board();
@@ -51,6 +52,19 @@ public class FenUtils {
                     currentFile++;
                 }
             }
+
+            char activeColor = (char) reader.read();
+            switch (activeColor) {
+                case 'w':
+                    board.setCurrentPlayerColor(PlayerColor.WHITE);
+                    break;
+                case 'b':
+                    board.setCurrentPlayerColor(PlayerColor.BLACK);
+                    break;
+                default:
+                    throw new RuntimeException("Invalid active color");
+            }
+
 
             return board;
 

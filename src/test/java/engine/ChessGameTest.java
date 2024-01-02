@@ -20,7 +20,7 @@ class ChessGameTest {
     ChessView chessView;
 
     @Test
-    void testBlankBoard() throws IOException {
+    void testBlankBoard() {
         ChessGame chessGame = new ChessGame();
         chessGame.start(chessView);
 

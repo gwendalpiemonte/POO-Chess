@@ -8,7 +8,6 @@ import engine.utils.FenUtils;
 
 public class ChessGame implements ChessController {
     static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    private PlayerColor currentPlayer;
 
     private ChessView view;
 
@@ -28,13 +27,20 @@ public class ChessGame implements ChessController {
         Position to = new Position(toX, toY);
         Piece piece = board.at(from);
 
+        // No piece on the given square
         if (piece == null) {
+            return false;
+        }
+
+        if (piece.getColor() != board.getCurrentPlayerColor()) {
             return false;
         }
 
         if (piece.isMoveValid(board, from, to)) {
             board.put(piece, to.file(), to.rank());
             board.remove(from.file(), from.rank());
+
+            board.setCurrentPlayerColor(board.getCurrentPlayerColor() == PlayerColor.WHITE ? PlayerColor.BLACK : PlayerColor.WHITE);
 
             view.removePiece(from.file(), from.rank());
             view.putPiece(piece.getType(), piece.getColor(), to.file(), to.rank());
@@ -57,13 +63,12 @@ public class ChessGame implements ChessController {
         }
     }
 
-
     @Override
     public void newGame() {
         init(FenUtils.load(START_BOARD_FEN));
     }
 
     public PlayerColor getCurrentPlayer() {
-        return currentPlayer;
+        return board.getCurrentPlayerColor();
     }
 }
