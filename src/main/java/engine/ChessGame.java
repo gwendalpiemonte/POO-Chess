@@ -9,8 +9,7 @@ import engine.promotion.*;
 import engine.utils.FenUtils;
 
 public class ChessGame implements ChessController {
-    // static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    static final String START_BOARD_FEN = "8/2P5/8/7k/3K4/8/5p2/R7 b - - 0 1";
+    static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     private ChessView view;
 
