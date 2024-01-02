@@ -43,7 +43,7 @@ public class QueenTest extends AbstractPieceTest {
 
     @Test
     void testCaptureOrthogonalMove() {
-        assertMoveValid("8/8/3n4/8/8/6Q1/8/8 w - - 0 1", "f2", "f6");
+        assertMoveValid("8/8/5n2/8/8/8/5Q2/8 w - - 0 1", "f2", "f6");
     }
 
     @Test
