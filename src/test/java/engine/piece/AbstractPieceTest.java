@@ -20,7 +20,6 @@ public class AbstractPieceTest {
                 .isFalse();
     }
 
-
     public boolean isMoveValid(String boardDef, String piece, String target) {
         Board board = FenUtils.load(boardDef);
 

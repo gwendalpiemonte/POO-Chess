@@ -53,6 +53,12 @@ class PawnTest extends AbstractPieceTest {
 
     //region Capture tests
 
+    @Test
+    void testCaptureDiagonal() {
+        assertMoveValid("8/8/8/8/4p3/3P4/8/8 w - - 0 1", "d3", "e4");
+        assertMoveValid("8/8/8/8/2p5/3P4/8/8 w - - 0 1", "d3", "c4");
+    }
+
     //endregion
 
     //region En-Passant tests

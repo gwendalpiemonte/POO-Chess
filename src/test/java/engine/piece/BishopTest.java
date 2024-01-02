@@ -22,6 +22,12 @@ public class BishopTest extends AbstractPieceTest {
     }
 
     @Test
+    void testCapture() {
+        assertMoveValid("8/8/2p5/8/4B3/8/8/8 w - - 0 1", "e4", "c6");
+        assertMoveValid("8/8/8/5p2/4B3/8/8/8 w - - 0 1", "e4", "f5");
+    }
+
+    @Test
     void testCannotStayOnSameSquare() {
         assertMoveInvalid("8/8/8/8/3b4/8/8/8 w - - 0 1", "d4", "d4");
     }

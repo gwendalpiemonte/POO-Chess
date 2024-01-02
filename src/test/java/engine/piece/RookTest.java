@@ -17,6 +17,12 @@ public class RookTest extends AbstractPieceTest {
     }
 
     @Test
+    void testCapture() {
+        assertMoveValid("8/5r2/8/8/5P2/8/8/8 w - - 0 1", "f7", "f4");
+        assertMoveValid("8/3P1r2/8/8/8/8/8/8 w - - 0 1", "f7", "d7");
+    }
+
+    @Test
     void testCannotSlideTroughOtherPiece() {
         assertMoveInvalid("8/8/3p4/8/8/3R4/8/8 w - - 0 1", "d3", "d7");
     }

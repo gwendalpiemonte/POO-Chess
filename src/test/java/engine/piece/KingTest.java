@@ -16,6 +16,11 @@ public class KingTest extends AbstractPieceTest {
     }
 
     @Test
+    void testCapture() {
+        assertMoveValid("8/8/8/8/4p3/4K3/8/8 w - - 0 1", "e3", "e4");
+    }
+
+    @Test
     void testCannotStayOnSameSquare() {
         assertMoveInvalid("8/8/8/3K4/8/8/8/8 w - - 0 1", "d5", "d5");
     }
