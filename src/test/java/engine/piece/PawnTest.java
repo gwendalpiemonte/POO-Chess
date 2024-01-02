@@ -80,6 +80,10 @@ class PawnTest extends AbstractPieceTest {
         assertMoveInvalid("k7/8/8/8/4pP2/8/8/K7 b - f3 0 1", "e4", "f4");
     }
 
+    @Test
+    void testCannotStayOnSameSquare() {
+        assertMoveInvalid("8/8/8/8/4P3/8/8/8 w - - 0 1", "e4", "e4");
+    }
 
     //endregion
 }
