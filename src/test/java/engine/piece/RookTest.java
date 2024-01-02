@@ -22,6 +22,11 @@ public class RookTest extends AbstractPieceTest {
     }
 
     @Test
+    void testCannotStayOnSameSquare() {
+        assertMoveInvalid("8/8/3R4/8/8/8/8/8 w - - 0 1", "d6", "d6");
+    }
+
+    @Test
     void testPieceOnTargetSquare() {
         assertMoveValid("8/8/3p4/8/3R4/8/8/8 w - - 0 1", "d4", "d6");
     }

@@ -12,6 +12,10 @@ public class OrthogonalMove {
             return false;
         }
 
+        if (!areRanksDifferent && !areFilesDifferent) {
+            return false;
+        }
+
         // TODO: There doesn't seem to be an easy way to extract these sections into a separate method
 
         if (areRanksDifferent) {
