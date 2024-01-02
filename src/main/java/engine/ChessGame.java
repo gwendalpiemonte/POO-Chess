@@ -33,18 +33,25 @@ public class ChessGame implements ChessController {
 
         // No piece on the given square
         if (piece == null) {
+            System.out.println("No piece");
             return false;
         }
 
         if (piece.getColor() != board.getCurrentPlayerColor()) {
+            System.out.println("Not your turn");
             return false;
         }
 
         Move move = piece.getMoveFor(board, from, to);
 
         if (!move.isValid()) {
+            System.out.println("Invalid move.");
             return false;
         }
+
+        // Reset the en-passant before moving (as the move sets it)
+        board.resetEnPassant();
+
 
         if (move instanceof PromotionMove promotionMove) {
             PromotionChoice choice = view.askUser(
@@ -61,24 +68,7 @@ public class ChessGame implements ChessController {
             move.move(board);
         }
 
-        board.resetEnPassant();
-
-        if (piece instanceof Pawn pawn) {
-           if (Pawn.isDoubleAdvance(from, to)) {
-                // Mark the piece as the candidate for an en-passant
-                board.setEnPassantCandidate(pawn);
-            }
-
-            // TODO: Check for checks (hehe)
-        } else if (piece instanceof Rook rook) {
-            rook.setHasMoved();
-        } else if (piece instanceof King king) {
-            king.setHasMoved();
-        }
         board.setCurrentPlayerColor(board.getCurrentPlayerColor() == PlayerColor.WHITE ? PlayerColor.BLACK : PlayerColor.WHITE);
-
-        view.removePiece(from.file(), from.rank());
-        view.putPiece(piece.getType(), piece.getColor(), to.file(), to.rank());
 
         return true; // TODO
     }
@@ -94,6 +84,8 @@ public class ChessGame implements ChessController {
                 }
             }
         }
+
+        board.putView(view);
     }
 
     @Override

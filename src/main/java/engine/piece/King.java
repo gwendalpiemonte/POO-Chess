@@ -4,6 +4,7 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
+import engine.temp.CastlingMove;
 import engine.temp.Move;
 
 public class King extends Piece {
@@ -53,10 +54,7 @@ public class King extends Piece {
             // TODO: Check for checks (hehe) on the way
 
             // TODO: Replace by castling move
-            return Move.standard(from, to, b -> {
-                rook.setHasMoved();
-                setHasMoved();
-            });
+            return new CastlingMove(from, to, direction);
         }
 
         if (Math.abs(rankDistance) > 1 || Math.abs(fileDistance) > 1) {

@@ -2,9 +2,8 @@ package engine.temp;
 
 import engine.Board;
 import engine.Position;
-import engine.piece.Piece;
 
-public class EnPassantMove extends Move.StandardMove {
+public class EnPassantMove extends StandardMove {
     public EnPassantMove(Position from, Position to) {
         super(from, to);
     }

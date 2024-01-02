@@ -1,8 +1,12 @@
 package engine;
 
+import chess.ChessView;
 import chess.PlayerColor;
 import engine.piece.Pawn;
 import engine.piece.Piece;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a chess board with its pieces
@@ -14,9 +18,15 @@ public class Board {
 
     private Pawn enPassantCandidate;
 
+    private List<ChessView> views = new ArrayList<>();
+
     public Board() {
         board = new Piece[8][8];
         currentPlayerColor = PlayerColor.WHITE;
+    }
+
+    public void putView(ChessView view) {
+        views.add(view);
     }
 
     public void setEnPassantCandidate(Pawn enPassantCandidate) {
@@ -66,6 +76,12 @@ public class Board {
      * @param rank The rank at which to put the piece
      */
     public void put(Piece piece, int file, int rank) {
+        if (piece != null) {
+            views.forEach(v -> v.putPiece(piece.getType(), piece.getColor(), file, rank));
+        } else {
+            views.forEach(v -> v.removePiece(file, rank));
+        }
+
         board[file][rank] = piece;
     }
 

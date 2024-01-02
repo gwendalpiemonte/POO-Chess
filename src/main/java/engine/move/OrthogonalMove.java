@@ -21,7 +21,7 @@ public class OrthogonalMove {
         if (areRanksDifferent) {
             int delta =  to.rank() - from.rank() > 0 ? 1 : -1;
 
-            for (int rank = from.rank() + delta; rank != to.rank(); rank += delta) {
+            for (int rank = from.rank() + delta; rank < to.rank(); rank += delta) {
                 if (board.at(to.file(), rank) != null) {
                     return false;
                 }
