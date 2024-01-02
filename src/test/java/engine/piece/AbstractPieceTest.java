@@ -17,6 +17,7 @@ public class AbstractPieceTest {
 
     public void assertMoveInvalid(String boardDef, String piece, String target) {
         assertThat(isMoveValid(boardDef, piece, target))
+                .as("Unexpected validity of move")
                 .isFalse();
     }
 

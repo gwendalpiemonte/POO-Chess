@@ -6,8 +6,9 @@ import engine.move.Move;
 import engine.piece.Pawn;
 import engine.piece.Piece;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Represents a chess board with its pieces
@@ -170,5 +171,37 @@ public class Board {
         } else {
             views.forEach(v -> v.removePiece(file, rank));
         }
+    }
+
+    public List<Position> getAttackersForPosition(PlayerColor color, Position position) {
+        PlayerColor opponentColor = getOppositeColor(color);
+
+        // Use some stream magic to get what we want:
+        return stream()
+                .filter(piece -> piece.getValue().getColor() == opponentColor)
+                .filter(piece -> piece.getValue().getMoveFor(this, piece.getKey(), position).isValid())
+                .map(Map.Entry::getKey)
+                .toList();
+    }
+
+    public Stream<Map.Entry<Position, Piece>> stream() {
+        return IntStream.range(0, board.length)
+                .boxed()
+                .flatMap(file ->
+                        IntStream.range(0, board[file].length)
+                                .filter(rank -> board[file][rank] != null)
+                                .mapToObj(rank -> Map.entry(
+                                        new Position(file, rank),
+                                        board[file][rank]
+                                ))
+                );
+    }
+
+
+    private PlayerColor getOppositeColor(PlayerColor color) {
+        return switch (color) {
+            case WHITE -> PlayerColor.BLACK;
+            case BLACK -> PlayerColor.WHITE;
+        };
     }
 }

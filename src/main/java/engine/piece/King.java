@@ -38,7 +38,10 @@ public class King extends Piece {
             return Move.illegal();
         }
 
-        // TODO: Check if the king is under attack if he moves to `to`
+        if (!board.getAttackersForPosition(getColor(), to).isEmpty()) {
+            // We cannot move here, as there is someone that attacks this cell
+            return Move.illegal();
+        }
 
         boolean isKingSideCastle = fileDistance == -2;
         int rookFile = isKingSideCastle ? 7 : 0;
