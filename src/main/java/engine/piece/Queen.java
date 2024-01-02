@@ -4,6 +4,8 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
+import engine.move.DiagonalMove;
+import engine.move.OrthogonalMove;
 
 public class Queen extends Piece {
     public Queen(PlayerColor color) {
@@ -21,6 +23,6 @@ public class Queen extends Piece {
 
     @Override
     public boolean isMoveValid(Board board, Position from, Position to) {
-        return false;
+        return DiagonalMove.isValid(board, from, to) || OrthogonalMove.isValid(board, from, to);
     }
 }
