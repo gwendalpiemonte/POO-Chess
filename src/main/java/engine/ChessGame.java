@@ -25,33 +25,15 @@ public class ChessGame implements ChessController {
 
     @Override
     public boolean move(int fromX, int fromY, int toX, int toY) {
-        System.out.println(String.format("TO REMOVE : from (%d, %d) to (%d, %d)", fromX, fromY, toX, toY)); // TODO remove
-
         Position from = new Position(fromX, fromY);
         Position to = new Position(toX, toY);
-        Piece piece = board.at(from);
 
-        // No piece on the given square
-        if (piece == null) {
-            System.out.println("No piece");
-            return false;
-        }
-
-        if (piece.getColor() != board.getCurrentPlayerColor()) {
-            System.out.println("Not your turn");
-            return false;
-        }
-
-        Move move = piece.getMoveFor(board, from, to);
+        Move move = board.getMoveFor(from, to);
 
         if (!move.isValid()) {
             System.out.println("Invalid move.");
             return false;
         }
-
-        // Reset the en-passant before moving (as the move sets it)
-        board.resetEnPassant();
-
 
         if (move instanceof PromotionMove promotionMove) {
             PromotionChoice choice = view.askUser(
@@ -63,14 +45,14 @@ public class ChessGame implements ChessController {
                     new PromotionChoice("Dame", PieceType.QUEEN)
             );
 
-            promotionMove.move(board, choice);
+            board.apply(promotionMove, choice);
         } else {
-            move.move(board);
+            board.apply(move);
         }
 
-        board.setCurrentPlayerColor(board.getCurrentPlayerColor() == PlayerColor.WHITE ? PlayerColor.BLACK : PlayerColor.WHITE);
+        setNextPlayer();
 
-        return true; // TODO
+        return true;
     }
 
     // Package-private in order to be usable in tests.
@@ -86,6 +68,14 @@ public class ChessGame implements ChessController {
         }
 
         board.putView(view);
+    }
+
+    private void setNextPlayer() {
+        if (board.getCurrentPlayerColor() == PlayerColor.WHITE) {
+            board.setCurrentPlayerColor(PlayerColor.BLACK);
+        } else {
+            board.setCurrentPlayerColor(PlayerColor.WHITE);
+        }
     }
 
     @Override

@@ -4,6 +4,9 @@ import chess.ChessView;
 import chess.PlayerColor;
 import engine.piece.Pawn;
 import engine.piece.Piece;
+import engine.promotion.PromotionChoice;
+import engine.temp.Move;
+import engine.temp.PromotionMove;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +46,34 @@ public class Board {
         }
 
         return enPassantCandidate.equals(piece);
+    }
+
+    public Move getMoveFor(Position from, Position to) {
+        Piece piece = at(from);
+
+        // No piece on the given square
+        if (piece == null) {
+            System.out.println("No piece");
+            return Move.illegal();
+        }
+
+        if (piece.getColor() != getCurrentPlayerColor()) {
+            System.out.println("Not your turn");
+            return Move.illegal();
+        }
+
+        return piece.getMoveFor(this, from, to);
+    }
+
+    public void apply(Move move) {
+        // Reset the en-passant before moving (as the move sets it)
+        resetEnPassant();
+        move.move(this);
+    }
+
+    public void apply(PromotionMove move, PromotionChoice choice) {
+        resetEnPassant();
+        move.move(this, choice);
     }
 
     /**
