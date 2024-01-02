@@ -85,6 +85,10 @@ public class Board {
         board[file][rank] = piece;
     }
 
+    public void put(Piece piece, Position position) {
+        put(piece, position.file(), position.rank());
+    }
+
     /**
      * Removes a piece if one exists on a given file and rank
      *

@@ -27,13 +27,13 @@ public class StandardMove implements Move {
         // no-op
         if (board.at(to) != null) {
             // Insert here if you want to handle the capture.
-            board.remove(to.rank(), to.file());
+            board.remove(to);
         }
 
         Piece piece = board.at(from);
         board.remove(from);
 
-        board.put(piece, to.file(), to.rank());
+        board.put(piece, to);
 
         if (additionalActions != null) {
             additionalActions.accept(board);

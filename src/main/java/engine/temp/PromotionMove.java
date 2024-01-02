@@ -23,7 +23,7 @@ public class PromotionMove implements Move {
     public void move(Board board, PromotionChoice choice) {
         board.remove(to);
 
-        board.put(choice.promote(((Pawn) board.at(from))), to.file(), to.rank());
+        board.put(choice.promote(((Pawn) board.at(from))), to);
         board.remove(from);
     }
 }
