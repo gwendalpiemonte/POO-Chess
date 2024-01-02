@@ -5,10 +5,13 @@ import engine.Position;
 import engine.piece.Pawn;
 import engine.promotion.PromotionChoice;
 
+import java.util.function.Supplier;
+
 public class PromotionMove implements Move {
 
     private final Position from;
     private final Position to;
+    private Supplier<PromotionChoice> choiceSupplier;
 
     public PromotionMove(Position from, Position to) {
         this.from = from;
@@ -16,14 +19,16 @@ public class PromotionMove implements Move {
     }
 
     @Override
-    public void move(Board board) {
-        throw new RuntimeException("Should be called with the move(Board, PieceType) overload");
+    public Move addPrompt(Supplier<PromotionChoice> supplier) {
+        choiceSupplier = supplier;
+        return this;
     }
 
-    public void move(Board board, PromotionChoice choice) {
+    @Override
+    public void move(Board board) {
         board.remove(to);
 
-        board.put(choice.promote(((Pawn) board.at(from))), to);
+        board.put(choiceSupplier.get().promote(((Pawn) board.at(from))), to);
         board.remove(from);
     }
 }

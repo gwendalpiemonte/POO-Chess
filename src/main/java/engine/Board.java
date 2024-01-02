@@ -5,8 +5,8 @@ import chess.PlayerColor;
 import engine.piece.Pawn;
 import engine.piece.Piece;
 import engine.promotion.PromotionChoice;
-import engine.temp.Move;
-import engine.temp.PromotionMove;
+import engine.move.Move;
+import engine.move.PromotionMove;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,11 +69,6 @@ public class Board {
         // Reset the en-passant before moving (as the move sets it)
         resetEnPassant();
         move.move(this);
-    }
-
-    public void apply(PromotionMove move, PromotionChoice choice) {
-        resetEnPassant();
-        move.move(this, choice);
     }
 
     /**

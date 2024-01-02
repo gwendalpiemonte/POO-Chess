@@ -35,20 +35,16 @@ public class ChessGame implements ChessController {
             return false;
         }
 
-        if (move instanceof PromotionMove promotionMove) {
-            PromotionChoice choice = view.askUser(
-                    "Promotion",
-                    "En quelle pièce souhaitez-vous promouvoir votre pion ?",
-                    new PromotionChoice("Tour", PieceType.ROOK),
-                    new PromotionChoice("Cavalier", PieceType.KNIGHT),
-                    new PromotionChoice("Fou", PieceType.BISHOP),
-                    new PromotionChoice("Dame", PieceType.QUEEN)
-            );
+        move.addPrompt(() -> view.askUser(
+                "Promotion",
+                "En quelle pièce souhaitez-vous promouvoir votre pion ?",
+                new PromotionChoice("Tour", PieceType.ROOK),
+                new PromotionChoice("Cavalier", PieceType.KNIGHT),
+                new PromotionChoice("Fou", PieceType.BISHOP),
+                new PromotionChoice("Dame", PieceType.QUEEN)
+        ));
 
-            board.apply(promotionMove, choice);
-        } else {
-            board.apply(move);
-        }
+        board.apply(move);
 
         setNextPlayer();
 

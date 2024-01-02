@@ -2,8 +2,11 @@ package engine.move;
 
 import engine.Board;
 import engine.Position;
+import engine.promotion.PromotionChoice;
 
+import java.awt.image.ImageProducer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @FunctionalInterface
 public interface Move {
@@ -27,6 +30,11 @@ public interface Move {
     }
     static Move standard(Position from, Position to, Consumer<Board> additionalActions) {
         return new StandardMove(from, to, additionalActions);
+    }
+
+    default Move addPrompt(Supplier<PromotionChoice> supplier) {
+        // NO-OP
+        return this;
     }
 
     void move(Board board);
