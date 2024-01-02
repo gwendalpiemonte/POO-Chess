@@ -46,6 +46,6 @@ class ChessGameTest {
         Position from = CoordinateUtils.fromString("d7");
         Position to = CoordinateUtils.fromString("d5");
 
-        assertThat(chessGame.move(from.rank(), from.file(), to.rank(), to.file())).isFalse();
+        assertThat(chessGame.move(from.file(), from.rank(), to.file(), to.rank())).isFalse();
     }
 }
