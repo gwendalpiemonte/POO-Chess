@@ -4,6 +4,7 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
+import engine.temp.Move;
 
 public class King extends Piece {
 
@@ -28,12 +29,12 @@ public class King extends Piece {
     }
 
     @Override
-    public boolean isMoveValid(Board board, Position from, Position to) {
+    public Move getMoveFor(Board board, Position from, Position to) {
         int rankDistance = from.rank() - to.rank();
         int fileDistance = from.file() - to.file();
 
         if (rankDistance == 0 && fileDistance == 0) {
-            return false;
+            return Move.illegal();
         }
 
         // TODO: Check if the king is under attack if he moves to `to`
@@ -45,15 +46,23 @@ public class King extends Piece {
             int direction = isKingSideCastle ? 1 : -1;
             for (int file = from.file() + direction; file != rookFile - direction; file += direction) {
                 if (board.at(file, from.rank()) != null) {
-                    return false;
+                    return Move.illegal();
                 }
             }
 
             // TODO: Check for checks (hehe) on the way
 
-            return true;
+            // TODO: Replace by castling move
+            return Move.standard(from, to, b -> {
+                rook.setHasMoved();
+                setHasMoved();
+            });
         }
 
-        return Math.abs(rankDistance) <= 1 && Math.abs(fileDistance) <= 1;
+        if (Math.abs(rankDistance) > 1 || Math.abs(fileDistance) > 1) {
+            return Move.illegal();
+        }
+
+        return Move.standard(from, to, b -> setHasMoved());
     }
 }

@@ -1,2 +1,4 @@
-package engine.temp;public class CaptureMove {
+package engine.temp;
+
+public class CaptureMove {
 }

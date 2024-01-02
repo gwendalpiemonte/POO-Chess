@@ -6,6 +6,8 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.piece.*;
 import engine.promotion.*;
+import engine.temp.Move;
+import engine.temp.PromotionMove;
 import engine.utils.FenUtils;
 
 public class ChessGame implements ChessController {
@@ -38,29 +40,31 @@ public class ChessGame implements ChessController {
             return false;
         }
 
-        if (!piece.isMoveValid(board, from, to)) {
+        Move move = piece.getMoveFor(board, from, to);
+
+        if (!move.isValid()) {
             return false;
+        }
+
+        if (move instanceof PromotionMove promotionMove) {
+            PromotionChoice choice = view.askUser(
+                    "Promotion",
+                    "En quelle pièce souhaitez-vous promouvoir votre pion ?",
+                    new PromotionChoice("Tour", PieceType.ROOK),
+                    new PromotionChoice("Cavalier", PieceType.KNIGHT),
+                    new PromotionChoice("Fou", PieceType.BISHOP),
+                    new PromotionChoice("Dame", PieceType.QUEEN)
+            );
+
+            promotionMove.move(board, choice);
+        } else {
+            move.move(board);
         }
 
         board.resetEnPassant();
 
-        board.put(piece, to.file(), to.rank());
-        board.remove(from.file(), from.rank());
-
         if (piece instanceof Pawn pawn) {
-            if (shouldPromote(pawn, to)) {
-                PromotionChoice choice = view.askUser(
-                        "Promotion",
-                        "En quelle pièce souhaitez-vous promouvoir votre pion ?",
-                        new PromotionChoice("Tour", PieceType.ROOK),
-                        new PromotionChoice("Cavalier", PieceType.KNIGHT),
-                        new PromotionChoice("Fou", PieceType.BISHOP),
-                        new PromotionChoice("Dame", PieceType.QUEEN)
-                );
-
-                piece = choice.promote(pawn);
-                board.put(piece, to.file(), to.rank());
-            } else if (Pawn.isDoubleAdvance(from, to)) {
+           if (Pawn.isDoubleAdvance(from, to)) {
                 // Mark the piece as the candidate for an en-passant
                 board.setEnPassantCandidate(pawn);
             }
@@ -77,13 +81,6 @@ public class ChessGame implements ChessController {
         view.putPiece(piece.getType(), piece.getColor(), to.file(), to.rank());
 
         return true; // TODO
-    }
-
-    boolean shouldPromote(Piece piece, Position position) {
-        return switch (piece.getColor()) {
-            case WHITE -> position.rank() == 7;
-            case BLACK -> position.rank() == 0;
-        };
     }
 
     // Package-private in order to be usable in tests.

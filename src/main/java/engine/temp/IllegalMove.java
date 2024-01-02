@@ -1,2 +1,4 @@
-package engine.temp;public class IllegalMove {
+package engine.temp;
+
+public class IllegalMove {
 }

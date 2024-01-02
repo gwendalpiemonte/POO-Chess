@@ -28,11 +28,11 @@ public class Board {
     }
 
     public boolean isEnPassantCandidate(Piece piece) {
-        if (enPassantCandidate != null) {
-            return enPassantCandidate.equals(piece);
-        } else {
+        if (enPassantCandidate == null) {
             return false;
         }
+
+        return enPassantCandidate.equals(piece);
     }
 
     /**
@@ -77,6 +77,10 @@ public class Board {
      */
     public void remove(int file, int rank) {
        put(null, file, rank);
+    }
+
+    public void remove(Position position) {
+        remove(position.file(), position.rank());
     }
 
     public PlayerColor getCurrentPlayerColor() {

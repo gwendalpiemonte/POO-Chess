@@ -6,6 +6,7 @@ import engine.Board;
 import engine.Position;
 import engine.move.DiagonalMove;
 import engine.move.OrthogonalMove;
+import engine.temp.Move;
 
 public class Queen extends Piece {
     public Queen(PlayerColor color) {
@@ -22,7 +23,13 @@ public class Queen extends Piece {
     }
 
     @Override
-    public boolean isMoveValid(Board board, Position from, Position to) {
-        return DiagonalMove.isValid(board, from, to) || OrthogonalMove.isValid(board, from, to);
+    public Move getMoveFor(Board board, Position from, Position to) {
+        boolean isMoveValid = DiagonalMove.isValid(board, from, to) || OrthogonalMove.isValid(board, from, to);
+
+        if (!isMoveValid) {
+            return Move.illegal();
+        }
+
+        return Move.standard(from, to);
     }
 }

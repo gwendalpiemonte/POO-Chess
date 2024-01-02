@@ -4,6 +4,9 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
+import engine.temp.EnPassantMove;
+import engine.temp.Move;
+import engine.temp.PromotionMove;
 
 import static java.lang.Math.abs;
 
@@ -18,50 +21,56 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public boolean isMoveValid(Board board, Position from, Position to) {
+    public Move getMoveFor(Board board, Position from, Position to) {
         // cannot move more than 2 files
         int fileDiff = from.file() - to.file();
         int fileDistance = abs(fileDiff);
-        // You cannot move more than 2 files apart
-        if (fileDistance > 1) {
-            return false;
-        }
-
         int distance = to.rank() - from.rank();
         int absDistance = abs(distance);
 
-        if (!isDirectionValid(from, to)) {
-            return false;
+        // You cannot move more than 2 files apart
+        if (fileDistance > 1
+            || !isDirectionValid(from, to)
+            || (fileDistance == 1 && !isCaptureMove(from, to))
+        ) {
+            return Move.illegal();
         }
 
-        // If the file distance is 1, then the move MUST be a capture
-        if (fileDistance == 1 && !isCaptureMove(from, to)) {
-            return false;
-        }
 
         if (isCaptureMove(from, to)) {
             // Check if there is a piece on the target position
             if (board.at(to) != null) {
-                return true;
+                return Move.standard(from, to);
             }
 
             // Check for en passant
             Piece enPassantPiece = board.at(to.file(), from.rank());
 
-            return enPassantPiece != null && board.isEnPassantCandidate(enPassantPiece);
+            if (enPassantPiece != null && board.isEnPassantCandidate(enPassantPiece)) {
+                return new EnPassantMove(from, to);
+            } else {
+                return Move.illegal();
+            }
         }
 
         boolean isTargetSquareFree = board.at(from.file(), from.rank() + distance) == null;
 
-        if (isDoubleAdvance(from, to)) {
-            boolean isIntermediarySquareFree = board.at(from.file(), from.rank() + distance / 2) == null;
+        // TODO: Add the promotion check.
 
-            return isTargetSquareFree && isIntermediarySquareFree && !this.isDeveloped(from);
-        } else if (absDistance == 1) {
-            return isTargetSquareFree;
+        if (shouldPromote(to)) {
+            return new PromotionMove(from, to);
         }
 
-        return false;
+        if (isDoubleAdvance(from, to)) {
+            boolean isIntermediarySquareFree = board.at(from.file(), from.rank() + distance / 2) == null;
+            if (isTargetSquareFree && isIntermediarySquareFree && !this.isDeveloped(from)) {
+                return Move.standard(from, to, b -> b.setEnPassantCandidate(this));
+            }
+        } else if (absDistance == 1 && isTargetSquareFree) {
+            return Move.standard(from, to);
+        }
+
+        return Move.illegal();
     }
 
     private boolean isDirectionValid(Position from, Position to) {
@@ -87,6 +96,13 @@ public class Pawn extends Piece {
         return switch (getColor()) {
             case BLACK -> from.rank() != 6;
             case WHITE -> from.rank() != 1;
+        };
+    }
+
+    private boolean shouldPromote(Position position) {
+        return switch (getColor()) {
+            case WHITE -> position.rank() == 7;
+            case BLACK -> position.rank() == 0;
         };
     }
 }

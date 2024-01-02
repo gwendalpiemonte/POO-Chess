@@ -1,2 +1,4 @@
-package engine.temp;public class CastlingMove {
+package engine.temp;
+
+public class CastlingMove {
 }

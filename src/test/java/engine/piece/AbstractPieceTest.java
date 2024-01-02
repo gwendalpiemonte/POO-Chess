@@ -2,6 +2,7 @@ package engine.piece;
 
 import engine.Board;
 import engine.Position;
+import engine.temp.Move;
 import engine.utils.CoordinateUtils;
 import engine.utils.FenUtils;
 
@@ -26,7 +27,7 @@ public class AbstractPieceTest {
         Position piecePos = CoordinateUtils.fromString(piece);
         Position targetPos = CoordinateUtils.fromString(target);
 
-        return board.at(piecePos.file(), piecePos.rank())
-                .isMoveValid(board, piecePos, targetPos);
+        return !(board.at(piecePos.file(), piecePos.rank())
+                .getMoveFor(board, piecePos, targetPos) instanceof Move.IllegalMove);
     }
 }

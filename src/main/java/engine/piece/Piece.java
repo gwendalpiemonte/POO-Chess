@@ -4,6 +4,7 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
+import engine.temp.Move;
 
 public abstract class Piece {
     // We go under the assumption that there is no way a piece can change color.
@@ -18,7 +19,7 @@ public abstract class Piece {
     /**
      * TODO: It seems strange that we pass the "from" to an instance of a piece.
      */
-    public abstract boolean isMoveValid(Board board, Position from, Position to);
+    public abstract Move getMoveFor(Board board, Position from, Position to);
 
     public PlayerColor getColor() {
         return color;
