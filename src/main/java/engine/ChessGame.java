@@ -7,7 +7,6 @@ import chess.PlayerColor;
 import engine.piece.*;
 import engine.promotion.*;
 import engine.move.Move;
-import engine.move.PromotionMove;
 import engine.utils.FenUtils;
 
 public class ChessGame implements ChessController {
@@ -45,9 +44,6 @@ public class ChessGame implements ChessController {
         ));
 
         board.apply(move);
-
-        setNextPlayer();
-
         return true;
     }
 
@@ -66,13 +62,6 @@ public class ChessGame implements ChessController {
         board.putView(view);
     }
 
-    private void setNextPlayer() {
-        if (board.getCurrentPlayerColor() == PlayerColor.WHITE) {
-            board.setCurrentPlayerColor(PlayerColor.BLACK);
-        } else {
-            board.setCurrentPlayerColor(PlayerColor.WHITE);
-        }
-    }
 
     @Override
     public void newGame() {

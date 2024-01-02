@@ -2,11 +2,9 @@ package engine;
 
 import chess.ChessView;
 import chess.PlayerColor;
+import engine.move.Move;
 import engine.piece.Pawn;
 import engine.piece.Piece;
-import engine.promotion.PromotionChoice;
-import engine.move.Move;
-import engine.move.PromotionMove;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +19,7 @@ public class Board {
 
     private Pawn enPassantCandidate;
 
-    private List<ChessView> views = new ArrayList<>();
+    private final List<ChessView> views = new ArrayList<>();
 
     public Board() {
         board = new Piece[8][8];
@@ -65,10 +63,20 @@ public class Board {
         return piece.getMoveFor(this, from, to);
     }
 
+    /**
+     * Applies a given move to the board.
+     *
+     * @param move The move to apply.
+     * @implNote All state specific to a turn is changed in this method
+     * (e.g. the current player, or the en-passant state)
+     */
     public void apply(Move move) {
         // Reset the en-passant before moving (as the move sets it)
         resetEnPassant();
+
         move.move(this);
+
+        changeTurn();
     }
 
     /**
@@ -94,19 +102,15 @@ public class Board {
 
     /**
      * Put the given piece at the given file and rank.
-     *
+     * <p>
      * TODO: Should we provide an atomic way of moving pieces on the board ?
      *
      * @param piece The piece to put
-     * @param file The file at which to put the piece
-     * @param rank The rank at which to put the piece
+     * @param file  The file at which to put the piece
+     * @param rank  The rank at which to put the piece
      */
     public void put(Piece piece, int file, int rank) {
-        if (piece != null) {
-            views.forEach(v -> v.putPiece(piece.getType(), piece.getColor(), file, rank));
-        } else {
-            views.forEach(v -> v.removePiece(file, rank));
-        }
+        notifyView(piece, file, rank);
 
         board[file][rank] = piece;
     }
@@ -122,7 +126,7 @@ public class Board {
      * @param rank The rank at which to remove the piece
      */
     public void remove(int file, int rank) {
-       put(null, file, rank);
+        put(null, file, rank);
     }
 
     /**
@@ -146,9 +150,25 @@ public class Board {
     /**
      * TODO: This might be removed, we can swap the player color once a move is performed. This is used to set the player color when creating a board from a FEN string
      *
-     * @param currentPlayerColor
+     * @param currentPlayerColor The new current player
      */
     public void setCurrentPlayerColor(PlayerColor currentPlayerColor) {
         this.currentPlayerColor = currentPlayerColor;
+    }
+
+    public void changeTurn() {
+        if (currentPlayerColor == PlayerColor.WHITE) {
+            currentPlayerColor = PlayerColor.BLACK;
+        } else {
+            currentPlayerColor = PlayerColor.WHITE;
+        }
+    }
+
+    private void notifyView(Piece piece, int file, int rank) {
+        if (piece != null) {
+            views.forEach(v -> v.putPiece(piece.getType(), piece.getColor(), file, rank));
+        } else {
+            views.forEach(v -> v.removePiece(file, rank));
+        }
     }
 }
