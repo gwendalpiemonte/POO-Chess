@@ -7,8 +7,23 @@ import engine.Position;
 import engine.move.OrthogonalMove;
 
 public class Rook extends Piece {
+
+    private boolean hasMoved;
+
     public Rook(PlayerColor color) {
         super(color);
+        hasMoved = false;
+    }
+
+    /**
+     * Marks the piece has having moved
+     */
+    public void setHasMoved() {
+        hasMoved = true;
+    }
+
+    public boolean getHasMoved() {
+        return hasMoved;
     }
 
     public Rook(Pawn pawn) {

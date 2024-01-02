@@ -66,6 +66,10 @@ public class ChessGame implements ChessController {
             }
 
             // TODO: Check for checks (hehe)
+        } else if (piece instanceof Rook rook) {
+            rook.setHasMoved();
+        } else if (piece instanceof King king) {
+            king.setHasMoved();
         }
         board.setCurrentPlayerColor(board.getCurrentPlayerColor() == PlayerColor.WHITE ? PlayerColor.BLACK : PlayerColor.WHITE);
 
