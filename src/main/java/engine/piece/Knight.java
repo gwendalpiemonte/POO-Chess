@@ -10,6 +10,10 @@ public class Knight extends Piece {
         super(color);
     }
 
+    public Knight(Pawn pawn) {
+        super(pawn.getColor());
+    }
+
     @Override
     public PieceType getType() {
         return PieceType.KNIGHT;

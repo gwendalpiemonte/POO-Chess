@@ -2,12 +2,15 @@ package engine;
 
 import chess.ChessController;
 import chess.ChessView;
+import chess.PieceType;
 import chess.PlayerColor;
 import engine.piece.*;
+import engine.promotion.*;
 import engine.utils.FenUtils;
 
 public class ChessGame implements ChessController {
-    static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    // static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    static final String START_BOARD_FEN = "8/2P5/8/7k/3K4/8/5p2/R7 b - - 0 1";
 
     private ChessView view;
 
@@ -36,18 +39,42 @@ public class ChessGame implements ChessController {
             return false;
         }
 
-        if (piece.isMoveValid(board, from, to)) {
-            board.put(piece, to.file(), to.rank());
-            board.remove(from.file(), from.rank());
-
-            board.setCurrentPlayerColor(board.getCurrentPlayerColor() == PlayerColor.WHITE ? PlayerColor.BLACK : PlayerColor.WHITE);
-
-            view.removePiece(from.file(), from.rank());
-            view.putPiece(piece.getType(), piece.getColor(), to.file(), to.rank());
-            return true;
+        if (!piece.isMoveValid(board, from, to)) {
+            return false;
         }
 
-        return false; // TODO
+        board.put(piece, to.file(), to.rank());
+        board.remove(from.file(), from.rank());
+
+        if (piece instanceof Pawn pawn && shouldPromote(pawn, to)) {
+            PromotionChoice choice = view.askUser(
+                    "Promotion",
+                    "En quelle pièce souhaitez-vous promouvoir votre pion ?",
+                    new PromotionChoice("Tour", PieceType.ROOK),
+                    new PromotionChoice("Cavalier", PieceType.KNIGHT),
+                    new PromotionChoice("Fou", PieceType.BISHOP),
+                    new PromotionChoice("Dame", PieceType.QUEEN)
+            );
+
+            piece = choice.promote(pawn);
+            board.put(piece, to.file(), to.rank());
+
+            // TODO: Check for checks (hehe)
+        }
+
+        board.setCurrentPlayerColor(board.getCurrentPlayerColor() == PlayerColor.WHITE ? PlayerColor.BLACK : PlayerColor.WHITE);
+
+        view.removePiece(from.file(), from.rank());
+        view.putPiece(piece.getType(), piece.getColor(), to.file(), to.rank());
+
+        return true; // TODO
+    }
+
+    boolean shouldPromote(Piece piece, Position position) {
+        return switch (piece.getColor()) {
+            case WHITE -> position.rank() == 7;
+            case BLACK -> position.rank() == 0;
+        };
     }
 
     // Package-private in order to be usable in tests.

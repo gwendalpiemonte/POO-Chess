@@ -10,6 +10,10 @@ public class Rook extends Piece {
         super(color);
     }
 
+    public Rook(Pawn pawn) {
+        super(pawn.getColor());
+    }
+
     @Override
     public PieceType getType() {
         return PieceType.ROOK;

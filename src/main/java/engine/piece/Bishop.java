@@ -10,6 +10,10 @@ public class Bishop extends Piece {
         super(color);
     }
 
+    public Bishop(Pawn pawn) {
+        super(pawn.getColor());
+    }
+
     @Override
     public PieceType getType() {
         return PieceType.BISHOP;

@@ -10,6 +10,10 @@ public class Queen extends Piece {
         super(color);
     }
 
+    public Queen(Pawn pawn) {
+        super(pawn.getColor());
+    }
+
     @Override
     public PieceType getType() {
         return PieceType.QUEEN;
