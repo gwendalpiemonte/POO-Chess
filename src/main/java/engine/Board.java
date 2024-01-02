@@ -125,16 +125,26 @@ public class Board {
        put(null, file, rank);
     }
 
+    /**
+     * Removes a piece if one exists at a given position
+     *
+     * @param position The position at which to remove the piece
+     */
     public void remove(Position position) {
         remove(position.file(), position.rank());
     }
 
+    /**
+     * Get the color of the player which should play the next move
+     *
+     * @return The current player color
+     */
     public PlayerColor getCurrentPlayerColor() {
         return currentPlayerColor;
     }
 
     /**
-     * TODO: This might be removed, we can swap the player color once a move is performed
+     * TODO: This might be removed, we can swap the player color once a move is performed. This is used to set the player color when creating a board from a FEN string
      *
      * @param currentPlayerColor
      */
