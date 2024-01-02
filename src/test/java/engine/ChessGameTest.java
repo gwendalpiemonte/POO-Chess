@@ -2,6 +2,7 @@ package engine;
 
 import chess.ChessView;
 import chess.PlayerColor;
+import engine.utils.CoordinateUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -33,5 +34,18 @@ class ChessGameTest {
         verify(chessView, times(16)).putPiece(any(), eq(PlayerColor.BLACK), anyInt(), anyInt());
 
         assertThat(chessGame.getCurrentPlayer()).isEqualTo(PlayerColor.WHITE);
+    }
+
+    @Test
+    void testMoveBlackPieceOnGameStart() {
+        ChessGame chessGame = new ChessGame();
+        chessGame.start(chessView);
+
+        chessGame.newGame();
+
+        Position from = CoordinateUtils.fromString("d7");
+        Position to = CoordinateUtils.fromString("d5");
+
+        assertThat(chessGame.move(from.rank(), from.file(), to.rank(), to.file())).isFalse();
     }
 }
