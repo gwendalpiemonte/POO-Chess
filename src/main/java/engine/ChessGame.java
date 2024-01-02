@@ -9,7 +9,7 @@ import engine.promotion.*;
 import engine.utils.FenUtils;
 
 public class ChessGame implements ChessController {
-    static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     private ChessView view;
 
@@ -42,25 +42,31 @@ public class ChessGame implements ChessController {
             return false;
         }
 
+        board.resetEnPassant();
+
         board.put(piece, to.file(), to.rank());
         board.remove(from.file(), from.rank());
 
-        if (piece instanceof Pawn pawn && shouldPromote(pawn, to)) {
-            PromotionChoice choice = view.askUser(
-                    "Promotion",
-                    "En quelle pièce souhaitez-vous promouvoir votre pion ?",
-                    new PromotionChoice("Tour", PieceType.ROOK),
-                    new PromotionChoice("Cavalier", PieceType.KNIGHT),
-                    new PromotionChoice("Fou", PieceType.BISHOP),
-                    new PromotionChoice("Dame", PieceType.QUEEN)
-            );
+        if (piece instanceof Pawn pawn) {
+            if (shouldPromote(pawn, to)) {
+                PromotionChoice choice = view.askUser(
+                        "Promotion",
+                        "En quelle pièce souhaitez-vous promouvoir votre pion ?",
+                        new PromotionChoice("Tour", PieceType.ROOK),
+                        new PromotionChoice("Cavalier", PieceType.KNIGHT),
+                        new PromotionChoice("Fou", PieceType.BISHOP),
+                        new PromotionChoice("Dame", PieceType.QUEEN)
+                );
 
-            piece = choice.promote(pawn);
-            board.put(piece, to.file(), to.rank());
+                piece = choice.promote(pawn);
+                board.put(piece, to.file(), to.rank());
+            } else if (Pawn.isDoubleAdvance(from, to)) {
+                // Mark the piece as the candidate for an en-passant
+                board.setEnPassantCandidate(pawn);
+            }
 
             // TODO: Check for checks (hehe)
         }
-
         board.setCurrentPlayerColor(board.getCurrentPlayerColor() == PlayerColor.WHITE ? PlayerColor.BLACK : PlayerColor.WHITE);
 
         view.removePiece(from.file(), from.rank());

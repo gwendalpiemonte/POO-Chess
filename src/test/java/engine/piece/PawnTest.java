@@ -54,4 +54,26 @@ class PawnTest extends AbstractPieceTest {
     //region Capture tests
 
     //endregion
+
+    //region En-Passant tests
+    @Test
+    void testWhiteEnPassant() {
+        assertMoveValid("k7/8/8/4pP2/8/8/8/K7 w - e6 0 1", "f5", "e6");
+        assertMoveValid("k7/8/8/4pP2/8/8/8/K7 w - e6 0 1", "f5", "f6");
+
+        assertMoveInvalid("k7/8/8/4pP2/8/8/8/K7 w - e6 0 1", "f5", "g6");
+        assertMoveInvalid("k7/8/8/4pP2/8/8/8/K7 w - e6 0 1", "f5", "e5");
+    }
+
+    @Test
+    void testBlackEnPassant() {
+        assertMoveValid("k7/8/8/8/4pP2/8/8/K7 b - f3 0 1", "e4", "f3");
+        assertMoveValid("k7/8/8/8/4pP2/8/8/K7 b - f3 0 1", "e4", "e3");
+
+        assertMoveInvalid("k7/8/8/8/4pP2/8/8/K7 b - f3 0 1", "e4", "g3");
+        assertMoveInvalid("k7/8/8/8/4pP2/8/8/K7 b - f3 0 1", "e4", "f4");
+    }
+
+
+    //endregion
 }

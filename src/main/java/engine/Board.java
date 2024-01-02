@@ -1,6 +1,7 @@
 package engine;
 
 import chess.PlayerColor;
+import engine.piece.Pawn;
 import engine.piece.Piece;
 
 /**
@@ -11,9 +12,27 @@ public class Board {
 
     private PlayerColor currentPlayerColor;
 
+    private Pawn enPassantCandidate;
+
     public Board() {
         board = new Piece[8][8];
         currentPlayerColor = PlayerColor.WHITE;
+    }
+
+    public void setEnPassantCandidate(Pawn enPassantCandidate) {
+        this.enPassantCandidate = enPassantCandidate;
+    }
+
+    public void resetEnPassant() {
+        this.enPassantCandidate = null;
+    }
+
+    public boolean isEnPassantCandidate(Piece piece) {
+        if (enPassantCandidate != null) {
+            return enPassantCandidate.equals(piece);
+        } else {
+            return false;
+        }
     }
 
     /**

@@ -2,11 +2,13 @@ package engine.utils;
 
 import chess.PlayerColor;
 import engine.Board;
+import engine.Position;
 import engine.piece.*;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Arrays;
 
 // The FEN notation (as described in https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)
 public class FenUtils {
@@ -64,7 +66,35 @@ public class FenUtils {
                 default:
                     throw new RuntimeException("Invalid active color");
             }
+            // Skip a character (the space)
+            reader.skip(1);
+            // parse castling status
+            currentChar = reader.read();
 
+            if (currentChar != '-') {
+                // TODO.
+                do {
+
+                } while ((currentChar = reader.read()) != ' ');
+            } else {
+                reader.skip(1);
+            }
+
+            // parse the en-passant case
+            currentChar = reader.read();
+
+            if (currentChar != '-') {
+                String value = String.valueOf(new char[]{(char) currentChar, (char) reader.read()});
+
+                Position enPassantPos = CoordinateUtils.fromString(value);
+                // in the FEN notation, this position is the case where the pawn can go to do an en-passant.
+                // To get the actual piece, we need to get the new position.
+                // (As it is the piece of the non-playing player, we invert the direction from the expected one)
+                int rankDiff = board.getCurrentPlayerColor() == PlayerColor.WHITE ? -1 : +1;
+                Position piecePos = new Position(enPassantPos.file(), enPassantPos.rank() + rankDiff);
+
+                board.setEnPassantCandidate((Pawn) board.at(piecePos));
+            }
 
             return board;
 
