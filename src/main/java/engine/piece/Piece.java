@@ -21,6 +21,10 @@ public abstract class Piece {
      */
     public abstract Move getMoveFor(Board board, Position from, Position to);
 
+    public Move getPseudoLegalMove(Board board, Position from, Position to) {
+        return getMoveFor(board, from, to);
+    }
+
     public PlayerColor getColor() {
         return color;
     }

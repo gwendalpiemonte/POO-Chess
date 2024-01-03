@@ -29,14 +29,31 @@ public class King extends Piece {
         return PieceType.KING;
     }
 
-    @Override
-    public Move getMoveFor(Board board, Position from, Position to) {
+    private Move getMove(Position from, Position to) {
         int rankDistance = from.rank() - to.rank();
         int fileDistance = from.file() - to.file();
 
         if (rankDistance == 0 && fileDistance == 0) {
             return Move.illegal();
         }
+
+        if (Math.abs(rankDistance) > 1 || Math.abs(fileDistance) > 1) {
+            return Move.illegal();
+        }
+
+        return Move.standard(from, to, b -> setHasMoved());
+    }
+
+    @Override
+    public Move getPseudoLegalMove(Board board, Position from, Position to) {
+        return getMove(from, to);
+    }
+
+    @Override
+    public Move getMoveFor(Board board, Position from, Position to) {
+        Move pseudoLegalCheck = getMove(from, to);
+
+        int fileDistance = from.file() - to.file();
 
         boolean isKingSideCastle = fileDistance == -2;
         int rookFile = isKingSideCastle ? 7 : 0;
@@ -55,15 +72,11 @@ public class King extends Piece {
             return new CastlingMove(from, to, direction);
         }
 
-        if (Math.abs(rankDistance) > 1 || Math.abs(fileDistance) > 1) {
-            return Move.illegal();
-        }
-
         if (!board.getAttackersForPosition(getColor(), to).isEmpty()) {
             // We cannot move here, as there is someone that attacks this cell
             return Move.illegal();
         }
 
-        return Move.standard(from, to, b -> setHasMoved());
+        return pseudoLegalCheck;
     }
 }

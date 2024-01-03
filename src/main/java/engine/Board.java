@@ -179,7 +179,7 @@ public class Board {
         // Use some stream magic to get what we want:
         return stream()
                 .filter(piece -> piece.getValue().getColor() == opponentColor)
-                .filter(piece -> piece.getValue().getMoveFor(this, piece.getKey(), position).isValid())
+                .filter(piece -> piece.getValue().getPseudoLegalMove(this, piece.getKey(), position).isValid())
                 .map(Map.Entry::getKey)
                 .toList();
     }
