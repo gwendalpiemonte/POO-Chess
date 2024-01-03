@@ -3,6 +3,7 @@ package engine.utils;
 import chess.PlayerColor;
 import engine.Board;
 import engine.ChessGame;
+import engine.Position;
 import engine.piece.Pawn;
 import engine.piece.Piece;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class FenUtilsTest {
     void testEnPassantWhite() {
         Board board = FenUtils.load("k7/8/8/4pP2/8/8/8/K7 w - e6 0 1");
 
-        Piece piece = board.at(CoordinateUtils.fromString("e5"));
+        Piece piece = board.at(Position.fromString("e5"));
 
         assertThat(piece)
                 .isNotNull()
@@ -44,7 +45,7 @@ class FenUtilsTest {
     void testEnPassantBlack() {
         Board board = FenUtils.load("k7/8/8/8/4pP2/8/8/K7 b - f3 0 1");
 
-        Piece piece = board.at(CoordinateUtils.fromString("f4"));
+        Piece piece = board.at(Position.fromString("f4"));
 
         assertThat(piece)
                 .isNotNull()

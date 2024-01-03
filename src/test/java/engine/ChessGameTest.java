@@ -2,7 +2,6 @@ package engine;
 
 import chess.ChessView;
 import chess.PlayerColor;
-import engine.utils.CoordinateUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -43,8 +42,8 @@ class ChessGameTest {
 
         chessGame.newGame();
 
-        Position from = CoordinateUtils.fromString("d7");
-        Position to = CoordinateUtils.fromString("d5");
+        Position from = Position.fromString("d7");
+        Position to = Position.fromString("d5");
 
         assertThat(chessGame.move(from.file(), from.rank(), to.file(), to.rank())).isFalse();
     }

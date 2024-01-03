@@ -86,7 +86,7 @@ public class FenUtils {
             if (currentChar != '-') {
                 String value = String.valueOf(new char[]{(char) currentChar, (char) reader.read()});
 
-                Position enPassantPos = CoordinateUtils.fromString(value);
+                Position enPassantPos = Position.fromString(value);
                 // in the FEN notation, this position is the case where the pawn can go to do an en-passant.
                 // To get the actual piece, we need to get the new position.
                 // (As it is the piece of the non-playing player, we invert the direction from the expected one)
