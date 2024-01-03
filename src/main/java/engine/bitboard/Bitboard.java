@@ -84,6 +84,38 @@ public class Bitboard {
     }
 
     /**
+     * Creates a bitboard with all squares of the file set to 1
+     *
+     * @param file The file on which the squares should be set to one
+     * @return The bitboard
+     */
+    public static Bitboard file(int file) {
+        long value = 0;
+
+        for (int i = 0; i < 8; i++) {
+            value |= 1L << (file * 8 + i);
+        }
+
+        return new Bitboard(value);
+    }
+
+    /**
+     * Creates a bitboard with all squares of the rank set to 1
+     *
+     * @param rank The rank on which the squares should be set to one
+     * @return The bitboard
+     */
+    public static Bitboard rank(int rank) {
+        long value = 0;
+
+        for (int i = 0; i < 8; i++) {
+            value |= 1L << (rank + i * 8);
+        }
+
+        return new Bitboard(value);
+    }
+
+    /**
      * Returns the index of a given position
      *
      * @param position The position at which to get the index

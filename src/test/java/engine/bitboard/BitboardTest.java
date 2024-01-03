@@ -63,6 +63,20 @@ public class BitboardTest {
     }
 
     @Test
+    void testFileBitboard() {
+        Bitboard bitboard = Bitboard.file(3);
+
+        assertThat(bitboard.value).isEqualTo(4278190080L);
+    }
+
+    @Test
+    void testRankBitboard() {
+        Bitboard bitboard = Bitboard.rank(5);
+
+        assertThat(bitboard.value).isEqualTo(2314885530818453536L);
+    }
+
+    @Test
     void testBitboardSet() {
         Bitboard bitboard = new Bitboard();
 
