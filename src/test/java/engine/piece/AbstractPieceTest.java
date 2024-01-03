@@ -3,28 +3,53 @@ package engine.piece;
 import engine.Board;
 import engine.Position;
 import engine.move.Move;
-import engine.Position;
 import engine.utils.FenUtils;
+import harness.JsonExportTestListener;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AbstractPieceTest {
+    public void assertMoveValid(String boardDef, String piece, String target, String description) {
+        isMoveValid(
+                boardDef,
+                piece,
+                target,
+                description,
+                true
+        );
+    }
 
     public void assertMoveValid(String boardDef, String piece, String target) {
-        assertThat(isMoveValid(boardDef, piece, target))
-                .as("Unexpected validity of move")
-                .overridingErrorMessage("The move is invalid, while it should be valid.")
-                .isTrue();
+        isMoveValid(
+                boardDef,
+                piece,
+                target,
+                "Pas de description disponible.",
+                true
+        );
+    }
+
+    public void assertMoveInvalid(String boardDef, String piece, String target, String description) {
+        isMoveValid(
+                boardDef,
+                piece,
+                target,
+                description,
+                false
+        );
     }
 
     public void assertMoveInvalid(String boardDef, String piece, String target) {
-        assertThat(isMoveValid(boardDef, piece, target))
-                .as("Unexpected validity of move")
-                .overridingErrorMessage("The move is valid, while it should be invalid.")
-                .isFalse();
+        isMoveValid(
+                boardDef,
+                piece,
+                target,
+                "Pas de description disponible.",
+                false
+        );
     }
 
-    public boolean isMoveValid(String boardDef, String piece, String target) {
+    public void isMoveValid(String boardDef, String piece, String target, String description, boolean expected) {
         Board board = FenUtils.load(boardDef);
 
         // To make some tests pass
@@ -32,6 +57,15 @@ public class AbstractPieceTest {
         Position piecePos = Position.fromString(piece);
         Position targetPos = Position.fromString(target);
 
-        return !(board.getMoveFor(piecePos, targetPos) instanceof Move.IllegalMove);
+
+        Move move = board.getMoveFor(piecePos, targetPos);
+
+        JsonExportTestListener.registerTest(boardDef, piece, target, description, expected);
+
+        boolean actual = !(move instanceof Move.IllegalMove);
+
+        assertThat(actual)
+                .as("Unexpected validity of move")
+                .isEqualTo(expected);
     }
 }
