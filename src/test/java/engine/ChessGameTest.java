@@ -2,6 +2,9 @@ package engine;
 
 import chess.ChessView;
 import chess.PlayerColor;
+import engine.piece.Pawn;
+import engine.piece.Piece;
+import engine.piece.Rook;
 import engine.utils.CoordinateUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,5 +50,20 @@ class ChessGameTest {
         Position to = CoordinateUtils.fromString("d5");
 
         assertThat(chessGame.move(from.file(), from.rank(), to.file(), to.rank())).isFalse();
+    }
+
+    @Test
+    void boardIsCloneable() {
+        Board original = new Board();
+        // Insert a piece
+        Rook piece = new Rook(PlayerColor.WHITE);
+        original.put(piece, 0,0);
+
+        Board cloned = original.clone();
+
+        piece.setHasMoved();
+        // Check that the pieces inside are cloned!
+        assertThat(((Rook) cloned.at(0, 0)).getHasMoved())
+                .isFalse();
     }
 }

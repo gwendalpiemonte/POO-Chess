@@ -44,6 +44,9 @@ public class ChessGame implements ChessController {
         ));
 
         board.apply(move);
+
+        board.changeTurn();
+
         return true;
     }
 

@@ -55,19 +55,17 @@ public class Pawn extends Piece {
 
         boolean isTargetSquareFree = board.at(from.file(), from.rank() + distance) == null;
 
-        // TODO: Add the promotion check.
-
-        if (shouldPromote(to)) {
-            return new PromotionMove(from, to);
-        }
-
-        if (isDoubleAdvance(from, to)) {
+        if (isDoubleAdvance(from, to) && !this.isDeveloped(from)) {
             boolean isIntermediarySquareFree = board.at(from.file(), from.rank() + distance / 2) == null;
-            if (isTargetSquareFree && isIntermediarySquareFree && !this.isDeveloped(from)) {
+            if (isTargetSquareFree && isIntermediarySquareFree) {
                 return Move.standard(from, to, b -> b.setEnPassantCandidate(this));
             }
         } else if (absDistance == 1 && isTargetSquareFree) {
-            return Move.standard(from, to);
+            if (shouldPromote(to)) {
+                return new PromotionMove(from, to);
+            } else {
+                return Move.standard(from, to);
+            }
         }
 
         return Move.illegal();

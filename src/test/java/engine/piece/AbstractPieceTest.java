@@ -27,10 +27,11 @@ public class AbstractPieceTest {
     public boolean isMoveValid(String boardDef, String piece, String target) {
         Board board = FenUtils.load(boardDef);
 
+        // To make some tests pass
+
         Position piecePos = CoordinateUtils.fromString(piece);
         Position targetPos = CoordinateUtils.fromString(target);
 
-        return !(board.at(piecePos.file(), piecePos.rank())
-                .getMoveFor(board, piecePos, targetPos) instanceof Move.IllegalMove);
+        return !(board.getMoveFor(piecePos, targetPos) instanceof Move.IllegalMove);
     }
 }

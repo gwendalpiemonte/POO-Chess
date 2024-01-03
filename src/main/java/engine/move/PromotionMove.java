@@ -1,5 +1,6 @@
 package engine.move;
 
+import chess.PieceType;
 import engine.Board;
 import engine.Position;
 import engine.piece.Pawn;
@@ -27,8 +28,16 @@ public class PromotionMove implements Move {
     @Override
     public void move(Board board) {
         board.remove(to);
-
-        board.put(choiceSupplier.get().promote(((Pawn) board.at(from))), to);
+        board.put(getChoice().promote(((Pawn) board.at(from))), to);
         board.remove(from);
+    }
+
+    private PromotionChoice getChoice() {
+        if (choiceSupplier == null) {
+            // Just the simple pawn
+            return new PromotionChoice("Pion", PieceType.PAWN);
+        }
+
+        return choiceSupplier.get();
     }
 }

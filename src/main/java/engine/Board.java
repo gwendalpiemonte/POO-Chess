@@ -3,6 +3,7 @@ package engine;
 import chess.ChessView;
 import chess.PlayerColor;
 import engine.move.Move;
+import engine.piece.King;
 import engine.piece.Pawn;
 import engine.piece.Piece;
 
@@ -13,7 +14,7 @@ import java.util.stream.Stream;
 /**
  * Represents a chess board with its pieces
  */
-public class Board {
+public class Board implements Cloneable {
     private final Piece[][] board;
 
     private PlayerColor currentPlayerColor;
@@ -25,6 +26,21 @@ public class Board {
     public Board() {
         board = new Piece[8][8];
         currentPlayerColor = PlayerColor.WHITE;
+    }
+
+    private Board(Board other) {
+        board = new Piece[8][8];
+        // Copy over all elements
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (other.board[i][j]!= null) {
+                    board[i][j] = other.board[i][j].clone();
+                }
+            }
+        }
+
+        currentPlayerColor = other.currentPlayerColor;
+        // Do not transfer the views!
     }
 
     public void putView(ChessView view) {
@@ -61,7 +77,36 @@ public class Board {
             return Move.illegal();
         }
 
-        return piece.getMoveFor(this, from, to);
+        Move moveFor = piece.getMoveFor(this, from, to);
+
+        // Validate that no check is created by this move:
+        Board cloned = clone();
+        cloned.apply(moveFor);
+
+        if (!cloned.getCheckAttackers().isEmpty()) {
+            System.out.println("Check is not resolved, or move would create one.");
+            return Move.illegal();
+        }
+        
+        return moveFor;
+    }
+    private List<Position> getCheckAttackers() {
+        Position kingPosition = getCurrentPlayerKing();
+        if (kingPosition == null) {
+            // This would never happen in a real game, but we still want tests to pass.
+            return List.of();
+        }
+
+        return getAttackersForPosition(getCurrentPlayerColor(), kingPosition);
+    }
+
+    private Position getCurrentPlayerKing() {
+        return stream()
+                .filter(e -> e.getValue() instanceof King)
+                .filter(e -> e.getValue().getColor() == getCurrentPlayerColor())
+                .findFirst()
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 
     /**
@@ -76,8 +121,6 @@ public class Board {
         resetEnPassant();
 
         move.move(this);
-
-        changeTurn();
     }
 
     /**
@@ -158,11 +201,7 @@ public class Board {
     }
 
     public void changeTurn() {
-        if (currentPlayerColor == PlayerColor.WHITE) {
-            currentPlayerColor = PlayerColor.BLACK;
-        } else {
-            currentPlayerColor = PlayerColor.WHITE;
-        }
+        currentPlayerColor = getOppositeColor(currentPlayerColor);
     }
 
     private void notifyView(Piece piece, int file, int rank) {
@@ -203,5 +242,13 @@ public class Board {
             case WHITE -> PlayerColor.BLACK;
             case BLACK -> PlayerColor.WHITE;
         };
+    }
+
+    // We suppress this warning, as the clone method is re-implemented from within the constructor
+    // (as to allow for replacement of the board)
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    @Override
+    public Board clone() {
+        return new Board(this);
     }
 }

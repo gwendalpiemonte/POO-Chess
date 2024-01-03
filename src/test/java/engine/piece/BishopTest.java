@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 public class BishopTest extends AbstractPieceTest {
     @Test
     void testDiagonalMove() {
-        assertMoveValid("8/8/8/3b4/8/8/8/8 w - - 0 1", "d5", "c6");
-        assertMoveValid("8/8/8/3b4/8/8/8/8 w - - 0 1", "d5", "a8");
-        assertMoveValid("8/8/8/3b4/8/8/8/8 w - - 0 1", "d5", "a2");
-        assertMoveValid("8/8/8/3b4/8/8/8/8 w - - 0 1", "d5", "b3");
-        assertMoveValid("8/8/8/3b4/8/8/8/8 w - - 0 1", "d5", "f3");
-        assertMoveValid("8/8/8/3b4/8/8/8/8 w - - 0 1", "d5", "f7");
+        assertMoveValid("8/8/8/3b4/8/8/8/8 b - - 0 1", "d5", "c6");
+        assertMoveValid("8/8/8/3b4/8/8/8/8 b - - 0 1", "d5", "a8");
+        assertMoveValid("8/8/8/3b4/8/8/8/8 b - - 0 1", "d5", "a2");
+        assertMoveValid("8/8/8/3b4/8/8/8/8 b - - 0 1", "d5", "b3");
+        assertMoveValid("8/8/8/3b4/8/8/8/8 b - - 0 1", "d5", "f3");
+        assertMoveValid("8/8/8/3b4/8/8/8/8 b - - 0 1", "d5", "f7");
     }
 
     @Test

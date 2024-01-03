@@ -12,7 +12,7 @@ class PawnTest extends AbstractPieceTest {
         // White
         assertMoveValid("8/8/8/8/8/8/4P3/8 w - - 0 1", "e2", "e3");
         // Black
-        assertMoveValid("8/4p3/8/8/8/8/8/8 w - - 0 1", "e7", "e6");
+        assertMoveValid("8/4p3/8/8/8/8/8/8 b - - 0 1", "e7", "e6");
     }
 
     @Test
@@ -20,7 +20,7 @@ class PawnTest extends AbstractPieceTest {
         // White
         assertMoveValid("8/8/8/8/8/8/4P3/8 w - - 0 1", "e2", "e4");
         // Black
-        assertMoveValid("8/4p3/8/8/8/8/8/8 w - - 0 1", "e7", "e5");
+        assertMoveValid("8/4p3/8/8/8/8/8/8 b - - 0 1", "e7", "e5");
     }
 
     @Test
@@ -30,7 +30,7 @@ class PawnTest extends AbstractPieceTest {
         // White
         assertMoveInvalid("8/8/8/8/8/4P3/8/8 w - - 0 1", "e3", "e5");
         // Black
-        assertMoveInvalid("8/8/4p3/8/8/8/8/8 w - - 0 1", "e6", "e4");
+        assertMoveInvalid("8/8/4p3/8/8/8/8/8 b - - 0 1", "e6", "e4");
     }
 
     @Test
@@ -38,7 +38,7 @@ class PawnTest extends AbstractPieceTest {
         // White
         assertMoveInvalid("8/8/8/8/8/4p3/4P3/8 w - - 0 1", "e2", "e3");
         // Black
-        assertMoveInvalid("8/4p3/4P3/8/8/8/8/8 w - - 0 1", "e7", "e6");
+        assertMoveInvalid("8/4p3/4P3/8/8/8/8/8 b - - 0 1", "e7", "e6");
     }
 
     @Test
@@ -46,7 +46,14 @@ class PawnTest extends AbstractPieceTest {
         // White
         assertMoveInvalid("8/8/8/8/8/4p3/4P3/8 w - - 0 1", "e2", "e4");
         // Black
-        assertMoveInvalid("8/4p3/4P3/8/8/8/8/8 w - - 0 1", "e7", "e5");
+        assertMoveInvalid("8/4p3/4P3/8/8/8/8/8 b - - 0 1", "e7", "e5");
+    }
+
+    @Test
+    void testThatPromotionCannotBeDoneFromFar() {
+        // Don't ask why this test exists
+        assertMoveInvalid("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "e2", "e8");
+        assertMoveInvalid("4n3/4P3/8/8/8/8/8/8 w - - 0 1", "e7", "e8");
     }
 
     //endregion

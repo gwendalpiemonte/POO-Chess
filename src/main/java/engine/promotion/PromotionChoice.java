@@ -31,6 +31,8 @@ public class PromotionChoice implements ChessView.UserChoice {
      */
     public Piece promote(Pawn pawn) {
         return switch (promotionPieceType) {
+            // PAWN exists only to make check testing with promotion moves easier
+            case PAWN -> pawn;
             case ROOK -> new Rook(pawn);
             case KNIGHT -> new Knight(pawn);
             case BISHOP -> new Bishop(pawn);
