@@ -14,7 +14,7 @@ public class ChecksTest extends AbstractPieceTest {
 
     @Test
     void testPieceCanBlockAttacker() {
-        assertMoveInvalid("3k4/8/8/3r4/8/8/8/3KB3 w - - 0 1", "e1", "d2");
+        assertMoveValid("3k4/8/8/3r4/8/8/8/3KB3 w - - 0 1", "e1", "d2");
     }
 
     @Test
