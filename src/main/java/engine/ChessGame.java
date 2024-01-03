@@ -26,6 +26,11 @@ public class ChessGame implements ChessController {
 
     @Override
     public boolean move(int fromX, int fromY, int toX, int toY) {
+        // We cannot move if no game was started, as the board was not initialized
+        if (board == null) {
+            return false;
+        }
+
         Position from = new Position(fromX, fromY);
         Position to = new Position(toX, toY);
 
