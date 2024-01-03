@@ -2,6 +2,7 @@ package engine.utils;
 
 import engine.Position;
 
+// TODO: Put this in Position
 public class CoordinateUtils {
     public static int charCoordinateToIndex(char c) {
         c = Character.toLowerCase(c);

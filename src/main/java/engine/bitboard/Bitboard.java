@@ -29,6 +29,61 @@ public class Bitboard {
     }
 
     /**
+     * Creates a bitboard with the file and rank set to 1 for the given position.
+     *
+     * @param position The position from which to fill the file and rank
+     * @return The bitboard representing the orthogonal moves from the given position
+     */
+    public static Bitboard orthogonal(Position position) {
+        long value = 0;
+        long index = index(position);
+
+        long file = index % 8;
+        long rank = index / 8;
+
+        for (int i = 0; i < 8; i++) {
+            value |= 1L << (file + i * 8);
+            value |= 1L << (rank * 8 + i);
+        }
+
+        return new Bitboard(value);
+    }
+
+    /**
+     * Creates a bitboard with the diagonals set to 1.
+     *
+     * @param position The position from which to fill the diagonals
+     * @return The bitboard representing the diagonal moves for the given position
+     */
+    public static Bitboard diagonal(Position position) {
+        long index = index(position);
+        long value = 1L << index;
+
+        long file = index % 8;
+        long rank = index / 8;
+
+        for (int i = 1; i < 8; i++) {
+            if (rank + i < 8 && file + i < 8) {
+                value |= 1L << ((rank + i) * 8 + file + i);
+            }
+
+            if (rank - i >= 0 && file - i >= 0) {
+                value |= 1L << ((rank - i) * 8 + file - i);
+            }
+
+            if (rank + i < 8 && file - i >= 0) {
+                value |= 1L << ((rank + i) * 8 + file - i);
+            }
+
+            if (rank - i >= 0 && file + i < 8) {
+                value |= 1L << ((rank - i) * 8 + file + i);
+            }
+        }
+
+        return new Bitboard(value);
+    }
+
+    /**
      * Returns the index of a given position
      *
      * @param position The position at which to get the index
