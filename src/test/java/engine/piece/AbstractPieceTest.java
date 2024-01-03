@@ -12,12 +12,15 @@ public class AbstractPieceTest {
 
     public void assertMoveValid(String boardDef, String piece, String target) {
         assertThat(isMoveValid(boardDef, piece, target))
+                .as("Unexpected validity of move")
+                .overridingErrorMessage("The move is invalid, while it should be valid.")
                 .isTrue();
     }
 
     public void assertMoveInvalid(String boardDef, String piece, String target) {
         assertThat(isMoveValid(boardDef, piece, target))
                 .as("Unexpected validity of move")
+                .overridingErrorMessage("The move is valid, while it should be invalid.")
                 .isFalse();
     }
 
