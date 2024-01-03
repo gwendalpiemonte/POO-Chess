@@ -125,6 +125,15 @@ public class Bitboard {
         return new Bitboard(~value);
     }
 
+    /**
+     * Checks whether the bitboard is empty or not
+     *
+     * @return true if the bitboard is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return value == 0;
+    }
+
     @Override
     public String toString() {
         return Long.toString(value);

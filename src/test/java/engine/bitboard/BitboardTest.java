@@ -1,5 +1,6 @@
 package engine.bitboard;
 
+import engine.Position;
 import engine.utils.CoordinateUtils;
 import org.junit.jupiter.api.Test;
 
@@ -113,5 +114,19 @@ public class BitboardTest {
         b2.set(CoordinateUtils.fromString("f2"), true);
 
         assertThat(b1.xor(b2).value).isEqualTo(51539607552L);
+    }
+
+    @Test
+    void testBitboardEmpty() {
+        Bitboard bitboard = new Bitboard();
+
+        assertThat(bitboard.isEmpty()).isTrue();
+    }
+
+    @Test
+    void testBitboardNotEmpty() {
+        Bitboard bitboard = Bitboard.single(Position.fromString("a4"));
+
+        assertThat(bitboard.isEmpty()).isFalse();
     }
 }
