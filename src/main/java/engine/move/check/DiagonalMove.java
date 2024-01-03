@@ -24,8 +24,6 @@ public class DiagonalMove {
            }
        }
 
-
-
        return true;
    }
 }

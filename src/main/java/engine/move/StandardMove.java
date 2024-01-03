@@ -24,7 +24,6 @@ public class StandardMove implements Move {
     }
 
     public void move(Board board) {
-        // no-op
         if (board.at(to) != null) {
             // Insert here if you want to handle the capture.
             board.remove(to);

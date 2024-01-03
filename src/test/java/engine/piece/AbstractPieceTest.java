@@ -3,6 +3,7 @@ package engine.piece;
 import engine.Board;
 import engine.Position;
 import engine.move.Move;
+import engine.Position;
 import engine.utils.FenUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +30,6 @@ public class AbstractPieceTest {
         Position piecePos = Position.fromString(piece);
         Position targetPos = Position.fromString(target);
 
-        return !(board.at(piecePos.file(), piecePos.rank())
-                .getMoveFor(board, piecePos, targetPos) instanceof Move.IllegalMove);
+        return !(board.getMoveFor(piecePos, targetPos) instanceof Move.IllegalMove);
     }
 }

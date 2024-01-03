@@ -6,7 +6,7 @@ import engine.Board;
 import engine.Position;
 import engine.move.Move;
 
-public abstract class Piece {
+public abstract class Piece implements Cloneable {
     // We go under the assumption that there is no way a piece can change color.
     private final PlayerColor color;
 
@@ -27,5 +27,14 @@ public abstract class Piece {
 
     public PlayerColor getColor() {
         return color;
+    }
+
+    @Override
+    public Piece clone() {
+        try {
+            return (Piece) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
