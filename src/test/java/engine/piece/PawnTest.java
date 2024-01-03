@@ -56,6 +56,11 @@ class PawnTest extends AbstractPieceTest {
         assertMoveInvalid("4n3/4P3/8/8/8/8/8/8 w - - 0 1", "e7", "e8");
     }
 
+    @Test
+    void testCannotGoBack() {
+        assertMoveInvalid("8/8/8/4P3/8/8/8/8 w - - 0 1", "e5", "e4");
+    }
+
     //endregion
 
     //region Capture tests
