@@ -27,6 +27,10 @@ public class Rook extends Piece {
         return hasMoved;
     }
 
+    public void resetHasMoved() {
+        hasMoved = false;
+    }
+
     public Rook(Pawn pawn) {
         super(pawn.getColor());
     }

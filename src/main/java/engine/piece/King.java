@@ -17,11 +17,21 @@ public class King extends Piece {
         hasMoved = false;
     }
 
+
+
     /**
      * Marks the piece has having moved
      */
     public void setHasMoved() {
         hasMoved = true;
+    }
+
+    /**
+     * Resets the moved status of the piece.
+     * Only useful for the FENUtils class
+     */
+    public void resetHasMoved() {
+        hasMoved = false;
     }
 
     @Override
@@ -57,18 +67,16 @@ public class King extends Piece {
 
         boolean isKingSideCastle = fileDistance == -2;
         int rookFile = isKingSideCastle ? 7 : 0;
-        if (!hasMoved && Math.abs(fileDistance) == 2 && board.at(rookFile, getColor() == PlayerColor.WHITE ? 7 : 0) instanceof Rook rook && !rook.getHasMoved()) {
+        if (!hasMoved && Math.abs(fileDistance) == 2 && board.at(rookFile, getColor() == PlayerColor.WHITE ? 0 : 7) instanceof Rook rook && !rook.getHasMoved()) {
             // Check if pieces are on the way
             int direction = isKingSideCastle ? 1 : -1;
             for (int file = from.file() + direction; file != rookFile - direction; file += direction) {
-                if (board.at(file, from.rank()) != null) {
+                Position pos = new Position(file, from.rank());
+                if (board.at(pos) != null || !board.getAttackersForPosition(getColor(), pos).isEmpty()) {
                     return Move.illegal();
                 }
             }
 
-            // TODO: Check for checks (hehe) on the way
-
-            // TODO: Replace by castling move
             return new CastlingMove(from, to, direction);
         }
 

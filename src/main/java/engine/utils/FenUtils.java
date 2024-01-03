@@ -8,7 +8,6 @@ import engine.piece.*;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Arrays;
 
 // The FEN notation (as described in https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)
 public class FenUtils {
@@ -43,9 +42,17 @@ public class FenUtils {
                         case 'p' -> new Pawn(color);
                         case 'n' -> new Knight(color);
                         case 'b' -> new Bishop(color);
-                        case 'r' -> new Rook(color);
+                        case 'r' -> {
+                            Rook rook = new Rook(color);
+                            rook.setHasMoved();
+                            yield rook;
+                        }
                         case 'q' -> new Queen(color);
-                        case 'k' -> new King(color);
+                        case 'k' -> {
+                            King king = new King(color);
+                            king.setHasMoved();
+                            yield king;
+                        }
                         default -> throw new RuntimeException("The FEN notation is invalid");
                     };
 
@@ -72,8 +79,16 @@ public class FenUtils {
             currentChar = reader.read();
 
             if (currentChar != '-') {
-                // TODO.
                 do {
+                    PlayerColor player = Character.isUpperCase(currentChar) ? PlayerColor.WHITE : PlayerColor.BLACK;
+                    // You can always set the king as not moved if a given player can castle
+                    int homeRank = player == PlayerColor.WHITE ? 0 : 7;
+                    ((King) board.at(4, homeRank)).resetHasMoved();
+
+                    switch (Character.toLowerCase(currentChar)) {
+                        case 'k' -> ((Rook) board.at(7, homeRank)).resetHasMoved();
+                        case 'q' -> ((Rook) board.at(0, homeRank)).resetHasMoved();
+                    }
 
                 } while ((currentChar = reader.read()) != ' ');
             } else {

@@ -49,4 +49,28 @@ public class KingTest extends AbstractPieceTest {
         assertMoveValid("8/8/8/8/8/k7/8/K7 w - - 0 1", "a1", "b1");
     }
 
+    @Test
+    void testCannotCastleWithIntermediaryCheck() {
+        assertMoveInvalid("1k6/8/8/8/b7/8/8/R3K3 w Q - 0 1", "e1", "c1");
+        assertMoveInvalid("1k6/8/8/8/5b2/8/8/R3K3 w Q - 0 1", "e1", "c1");
+        assertMoveInvalid("1k6/8/8/8/8/8/3n4/4K2R w K - 0 1", "e1", "g1");
+        assertMoveInvalid("1k6/8/8/8/8/3b4/8/4K2R w K - 0 1", "e1", "g1");
+    }
+
+    @Test
+    void testKingCanCastle() {
+        assertMoveValid("1k6/8/8/8/8/8/8/4K2R w K - 0 1", "e1", "g1");
+        assertMoveValid("1k6/8/8/8/8/8/8/R3K3 w Q - 0 1", "e1", "c1");
+    }
+
+    @Test
+    void testKingCannotCastleIfMoved() {
+        assertMoveInvalid("1k6/8/8/8/8/8/8/4K2R w - - 0 1", "e1", "g1");
+        assertMoveInvalid("1k6/8/8/8/8/8/8/R3K3 w - - 0 1", "e1", "c1");
+    }
+
+    @Test
+    void testKingDoesCastleIfTowerIsAttacked() {
+        assertMoveValid("1k6/8/8/8/4b3/8/8/R3K3 w Q - 0 1", "e1", "c1");
+    }
 }
