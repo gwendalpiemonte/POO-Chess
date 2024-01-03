@@ -4,9 +4,11 @@ import chess.ChessController;
 import chess.ChessView;
 import chess.PieceType;
 import chess.PlayerColor;
+import engine.bitboard.Bitboard;
 import engine.piece.*;
 import engine.promotion.*;
 import engine.move.Move;
+import engine.utils.CoordinateUtils;
 import engine.utils.FenUtils;
 
 public class ChessGame implements ChessController {
