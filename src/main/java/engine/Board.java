@@ -240,16 +240,19 @@ public class Board implements Cloneable {
     }
 
     public Stream<Map.Entry<Position, Piece>> stream() {
-        return IntStream.range(0, board.length)
-                .boxed()
-                .flatMap(file ->
-                        IntStream.range(0, board[file].length)
-                                .filter(rank -> board[file][rank] != null)
-                                .mapToObj(rank -> Map.entry(
-                                        new Position(file, rank),
-                                        board[file][rank]
-                                ))
-                );
+        Stream.Builder<Map.Entry<Position, Piece>> builder = Stream.builder();
+        for (int file = 0; file < 8; file++) {
+            for (int rank = 0; rank < 8; rank++) {
+                if (board[file][rank] != null) {
+                    builder.accept(Map.entry(
+                            new Position(file, rank),
+                            board[file][rank]
+                    ));
+                }
+            }
+        }
+
+        return builder.build();
     }
 
 
