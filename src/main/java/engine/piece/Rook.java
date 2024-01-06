@@ -42,12 +42,12 @@ public class Rook extends Piece {
 
     @Override
     public Move getMoveFor(Board board, Position from, Position to) {
-       boolean isMoveValid = OrthogonalMove.isValid(board, from, to);
+        boolean isMoveValid = OrthogonalMove.isValid(board, from, to);
 
-       if (!isMoveValid) {
-           return Move.illegal();
-       }
+        if (!isMoveValid) {
+            return Move.illegal();
+        }
 
-       return Move.standard(from, to, b -> setHasMoved());
+        return Move.standard(from, to, b -> setHasMoved());
     }
 }

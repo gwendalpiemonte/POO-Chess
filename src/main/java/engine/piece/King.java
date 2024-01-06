@@ -18,7 +18,6 @@ public class King extends Piece {
     }
 
 
-
     /**
      * Marks the piece has having moved
      */

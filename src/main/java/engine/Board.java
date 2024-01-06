@@ -8,7 +8,6 @@ import engine.piece.Pawn;
 import engine.piece.Piece;
 
 import java.util.*;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -33,7 +32,7 @@ public class Board implements Cloneable {
         // Copy over all elements
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (other.board[i][j]!= null) {
+                if (other.board[i][j] != null) {
                     board[i][j] = other.board[i][j].clone();
                 }
             }
@@ -87,7 +86,7 @@ public class Board implements Cloneable {
             System.out.println("Check is not resolved, or move would create one.");
             return Move.illegal();
         }
-        
+
         return moveFor;
     }
 
@@ -172,7 +171,7 @@ public class Board implements Cloneable {
     /**
      * Put the given piece at the given position.
      *
-     * @param piece The piece to put
+     * @param piece    The piece to put
      * @param position The position at which to put the piece
      */
     public void put(Piece piece, Position position) {

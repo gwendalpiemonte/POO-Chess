@@ -30,8 +30,8 @@ public class Pawn extends Piece {
 
         // You cannot move more than 2 files apart
         if (fileDistance > 1
-            || !isDirectionValid(from, to)
-            || (fileDistance == 1 && !isCaptureMove(from, to))
+                || !isDirectionValid(from, to)
+                || (fileDistance == 1 && !isCaptureMove(from, to))
         ) {
             return Move.illegal();
         }
