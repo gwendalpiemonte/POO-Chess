@@ -24,7 +24,7 @@ public class AbstractPieceTest {
                 boardDef,
                 piece,
                 target,
-                "Pas de description disponible.",
+                "",
                 true
         );
     }

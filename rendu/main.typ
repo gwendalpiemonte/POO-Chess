@@ -52,7 +52,6 @@ Ces notations ont été intégralement générées à l'aide du site #link("http
 
 == Tests
 
-/*
 #{
   let elements = json("./generated/tests-output.json")
 
@@ -60,7 +59,7 @@ Ces notations ont été intégralement générées à l'aide du site #link("http
     test(element.fen, from: element.from, to: element.to, element.description, valid: element.valid, name: element.testCase)
   }
 }
-*/
+
 
 == Code source
 
