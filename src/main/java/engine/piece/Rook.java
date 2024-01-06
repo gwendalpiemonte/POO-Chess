@@ -4,6 +4,7 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
+import engine.bitboard.Bitboard;
 import engine.move.check.OrthogonalMove;
 import engine.move.Move;
 
@@ -42,12 +43,12 @@ public class Rook extends Piece {
 
     @Override
     public Move getMoveFor(Board board, Position from, Position to) {
-       boolean isMoveValid = OrthogonalMove.isValid(board, from, to);
+        boolean isMoveValid = OrthogonalMove.isValid(board, from, to);
 
-       if (!isMoveValid) {
-           return Move.illegal();
-       }
+        if (!isMoveValid) {
+            return Move.illegal();
+        }
 
-       return Move.standard(from, to, b -> setHasMoved());
+        return Move.standard(from, to, b -> setHasMoved());
     }
 }

@@ -2,6 +2,7 @@ package engine;
 
 import chess.ChessView;
 import chess.PlayerColor;
+import engine.bitboard.Bitboard;
 import engine.move.Move;
 import engine.piece.King;
 import engine.piece.Pawn;
@@ -33,7 +34,7 @@ public class Board implements Cloneable {
         // Copy over all elements
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (other.board[i][j]!= null) {
+                if (other.board[i][j] != null) {
                     board[i][j] = other.board[i][j].clone();
                 }
             }
@@ -87,9 +88,10 @@ public class Board implements Cloneable {
             System.out.println("Check is not resolved, or move would create one.");
             return Move.illegal();
         }
-        
+
         return moveFor;
     }
+
     private List<Position> getCheckAttackers() {
         Position kingPosition = getCurrentPlayerKing();
         if (kingPosition == null) {
@@ -142,6 +144,27 @@ public class Board implements Cloneable {
      */
     public Piece at(Position position) {
         return at(position.file(), position.rank());
+    }
+
+    /**
+     * Returns true if the square at `position` is occupied by a piece, false otherwise
+     *
+     * @param position The position at which to check
+     * @return true if square is occupied, false otherwise
+     */
+    public boolean isOccupied(Position position) {
+        return at(position) != null;
+    }
+
+    /**
+     * Returns true if the square at `file` and `rank` is occupied by a piece, false otherwise
+     *
+     * @param file The file at which to check
+     * @param rank The rank at which to rank
+     * @return true if square is occupied, false otherwise
+     */
+    public boolean isOccupied(int file, int rank) {
+        return at(file, rank) != null;
     }
 
     /**

@@ -4,6 +4,7 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
+import engine.bitboard.Bitboard;
 import engine.move.EnPassantMove;
 import engine.move.Move;
 import engine.move.PromotionMove;
