@@ -20,12 +20,11 @@ public class AbstractPieceTest {
     }
 
     public void assertMoveValid(String boardDef, String piece, String target) {
-        isMoveValid(
+        assertMoveValid(
                 boardDef,
                 piece,
                 target,
-                "",
-                true
+                ""
         );
     }
 
@@ -40,12 +39,11 @@ public class AbstractPieceTest {
     }
 
     public void assertMoveInvalid(String boardDef, String piece, String target) {
-        isMoveValid(
+        assertMoveInvalid(
                 boardDef,
                 piece,
                 target,
-                "",
-                false
+                ""
         );
     }
 
