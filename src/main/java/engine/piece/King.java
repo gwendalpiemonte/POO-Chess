@@ -38,7 +38,7 @@ public class King extends Piece {
         return PieceType.KING;
     }
 
-    private Move getMove(Position from, Position to) {
+    private Move getMove(Board board, Position from, Position to) {
         int rankDistance = from.rank() - to.rank();
         int fileDistance = from.file() - to.file();
 
@@ -50,17 +50,21 @@ public class King extends Piece {
             return Move.illegal();
         }
 
+        if (isAlreadyTaken(board, to)) {
+            return Move.illegal();
+        }
+
         return Move.standard(from, to, b -> setHasMoved());
     }
 
     @Override
     public Move getPseudoLegalMove(Board board, Position from, Position to) {
-        return getMove(from, to);
+        return getMove(board, from, to);
     }
 
     @Override
     public Move getMoveFor(Board board, Position from, Position to) {
-        Move pseudoLegalCheck = getMove(from, to);
+        Move pseudoLegalCheck = getMove(board, from, to);
 
         int fileDistance = from.file() - to.file();
 

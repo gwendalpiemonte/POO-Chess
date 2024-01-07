@@ -32,6 +32,10 @@ public class Knight extends Piece {
             return Move.illegal();
         }
 
+        if (isAlreadyTaken(board, to)) {
+            return Move.illegal();
+        }
+
         return Move.standard(from, to);
     }
 }

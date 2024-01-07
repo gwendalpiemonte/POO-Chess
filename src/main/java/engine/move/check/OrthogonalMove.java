@@ -1,10 +1,12 @@
 package engine.move.check;
 
+import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
+import engine.piece.Piece;
 
 public class OrthogonalMove {
-    public static boolean isValid(Board board, Position from, Position to) {
+    public static boolean isValid(Board board, PlayerColor color, Position from, Position to) {
         boolean areRanksDifferent = from.rank() != to.rank();
         boolean areFilesDifferent = from.file() != to.file();
 
@@ -38,6 +40,7 @@ public class OrthogonalMove {
             }
         }
 
-        return true;
+        Piece target = board.at(to);
+        return target == null || target.getColor() != color;
     }
 }

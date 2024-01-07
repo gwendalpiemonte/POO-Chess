@@ -23,7 +23,7 @@ public class Bishop extends Piece {
 
     @Override
     public Move getMoveFor(Board board, Position from, Position to) {
-        boolean isMoveValid = DiagonalMove.isValid(board, from, to);
+        boolean isMoveValid = DiagonalMove.isValid(board, getColor(), from, to);
 
         if (!isMoveValid) {
             return Move.illegal();

@@ -29,6 +29,11 @@ public abstract class Piece implements Cloneable {
         return color;
     }
 
+    public boolean isAlreadyTaken(Board board, Position position) {
+        Piece piece = board.at(position);
+        return piece != null && piece.getColor() == getColor();
+    }
+
     @Override
     public Piece clone() {
         try {
