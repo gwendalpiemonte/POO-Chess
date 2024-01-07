@@ -37,4 +37,10 @@ public class RookTest extends AbstractPieceTest {
         assertMoveValid("8/8/3p4/8/3R4/8/8/8 w - - 0 1", "d4", "d6");
     }
 
+
+    @Test
+    void cannotCaptureAlly() {
+        assertMoveInvalid("6rk/8/8/8/8/8/8/1KQR4 w - - 0 1", "d1", "c1");
+        assertMoveInvalid("6rk/8/8/8/8/8/8/1KQR4 w - - 0 1", "d1", "b1");
+    }
 }

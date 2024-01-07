@@ -59,4 +59,10 @@ public class QueenTest extends AbstractPieceTest {
     void testCannotStayOnSameSquare() {
         assertMoveInvalid("8/8/5q2/8/8/8/8/8 w - - 0 1", "f6", "f6");
     }
+
+    @Test
+    void cannotCaptureAlly() {
+        assertMoveInvalid("k7/8/8/8/8/8/8/KQ6 w - - 0 1", "b1", "a1");
+        assertMoveInvalid("k7/8/8/8/8/8/8/KQR5 w - - 0 1", "b1", "c1");
+    }
 }

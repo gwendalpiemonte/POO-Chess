@@ -37,4 +37,10 @@ public class BishopTest extends AbstractPieceTest {
         assertMoveInvalid("8/8/8/3b4/8/5P2/8/8 w - - 0 1", "d5", "g2");
         assertMoveInvalid("8/8/8/2P5/8/4b3/8/8 w - - 0 1", "e3", "a7");
     }
+
+    @Test
+    void cannotCaptureAlly() {
+        assertMoveInvalid("k7/8/8/8/8/8/3P1P2/K3B3 w - - 0 1", "e1", "d2");
+        assertMoveInvalid("6rk/8/8/8/8/8/8/1KQR4 w - - 0 1", "e1", "f2");
+    }
 }

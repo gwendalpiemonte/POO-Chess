@@ -32,4 +32,10 @@ public class KnightTest extends AbstractPieceTest {
         assertMoveValid("8/8/8/3N4/1p6/8/8/8 w - - 0 1", "d5", "b4");
         assertMoveValid("8/8/1p6/3N4/8/8/8/8 w - - 0 1", "d5", "b6");
     }
+
+    @Test
+    void cannotCaptureAlly() {
+        assertMoveInvalid("k7/8/8/8/8/4P1P1/8/K4N2 w - - 0 1", "f1", "e3");
+        assertMoveInvalid("k7/8/8/8/8/4P1P1/8/K4N2 w - - 0 1", "f1", "g3");
+    }
 }
