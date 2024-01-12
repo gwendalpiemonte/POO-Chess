@@ -2,18 +2,17 @@ package engine.piece;
 
 import chess.PieceType;
 import chess.PlayerColor;
-import engine.Board;
-import engine.Position;
-import engine.move.check.DiagonalMove;
-import engine.move.Move;
+import engine.CardinalDirection;
 
-public class Bishop extends Piece {
+import java.util.List;
+
+public class Bishop extends SlidingPiece {
     public Bishop(PlayerColor color) {
         super(color);
     }
 
-    public Bishop(Pawn pawn) {
-        super(pawn.getColor());
+    public Bishop(Piece promotedPiece) {
+        super(promotedPiece.getColor());
     }
 
     @Override
@@ -22,13 +21,7 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public Move getMoveFor(Board board, Position from, Position to) {
-        boolean isMoveValid = DiagonalMove.isValid(board, getColor(), from, to);
-
-        if (!isMoveValid) {
-            return Move.illegal();
-        }
-
-        return Move.standard(from, to);
+    public List<CardinalDirection> allowedDirections() {
+        return CardinalDirection.DIAGONALS;
     }
 }

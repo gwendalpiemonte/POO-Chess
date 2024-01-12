@@ -2,11 +2,8 @@ package engine.piece;
 
 import chess.PieceType;
 import chess.PlayerColor;
-import engine.Board;
-import engine.Position;
-import engine.bitboard.Bitboard;
-import engine.move.check.OrthogonalMove;
-import engine.move.Move;
+import engine.CardinalDirection;
+import engine.piece.traits.MoveListener;
 
 import java.util.List;
 
@@ -19,28 +16,21 @@ public class Rook extends SlidingPiece implements MoveListener {
         hasMoved = false;
     }
 
+    public Rook(Piece promotedPiece) {
+        super(promotedPiece.getColor());
+    }
+
     @Override
     public List<CardinalDirection> allowedDirections() {
         return CardinalDirection.ORTHOGONALS;
-    }
-
-    /**
-     * Marks the piece has having moved
-     */
-    public void setHasMoved() {
-        hasMoved = true;
     }
 
     public boolean getHasMoved() {
         return hasMoved;
     }
 
-    public void resetHasMoved() {
-        hasMoved = false;
-    }
-
-    public Rook(Pawn pawn) {
-        super(pawn.getColor());
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
     }
 
     @Override

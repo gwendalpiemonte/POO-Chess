@@ -5,15 +5,19 @@ import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
 import engine.bitboard.Bitboard;
-import engine.move.EnPassantMove;
-import engine.move.Move;
-import engine.move.PromotionMove;
+import engine.piece.traits.PromotablePiece;
+
+import java.util.List;
 
 import static java.lang.Math.abs;
 
-public class Pawn extends Piece {
+public class Pawn extends Piece implements PromotablePiece {
     public Pawn(PlayerColor color) {
         super(color);
+    }
+
+    public Pawn(Piece promotedPiece) {
+        super(promotedPiece.getColor());
     }
 
     @Override
@@ -22,67 +26,57 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public Move getMoveFor(Board board, Position from, Position to) {
-        // cannot move more than 2 files
-        int fileDiff = from.file() - to.file();
-        int fileDistance = abs(fileDiff);
-        int distance = to.rank() - from.rank();
-        int absDistance = abs(distance);
+    public Bitboard getMoves(Board board, Position from) {
+        Bitboard self = Bitboard.single(from);
 
-        // You cannot move more than 2 files apart
-        if (fileDistance > 1
-                || !isDirectionValid(from, to)
-                || (fileDistance == 1 && !isCaptureMove(from, to))
-        ) {
-            return Move.illegal();
+        // Bitboard for simple advance
+        Bitboard advance = self.shift(getShift())
+                .and(board.getOccupationBoard().not());
+
+        if (!isDeveloped(from)) {
+            // We shift the simple advance board to ensure that if it can't move one cell, it cannot move two.
+            advance = advance.or(advance.shift(getShift()));
         }
 
-
-        if (isCaptureMove(from, to)) {
-            // Check if there is a piece on the target position
-            Piece piece = board.at(to);
-            if (piece != null && piece.getColor() != getColor()) {
-                return Move.standard(from, to);
-            }
-
-            // Check for en passant
-            Piece enPassantPiece = board.at(to.file(), from.rank());
-
-            if (enPassantPiece != null && board.isEnPassantCandidate(enPassantPiece)) {
-                return new EnPassantMove(from, to);
-            } else {
-                return Move.illegal();
-            }
-        }
-
-        boolean isTargetSquareFree = board.at(from.file(), from.rank() + distance) == null ;
-
-        if (isDoubleAdvance(from, to) && !this.isDeveloped(from)) {
-            boolean isIntermediarySquareFree = board.at(from.file(), from.rank() + distance / 2) == null;
-            if (isTargetSquareFree && isIntermediarySquareFree) {
-                return Move.standard(from, to, b -> b.setEnPassantCandidate(this));
-            }
-        } else if (absDistance == 1 && isTargetSquareFree) {
-            if (shouldPromote(to)) {
-                return new PromotionMove(from, to);
-            } else {
-                return Move.standard(from, to);
-            }
-        }
-
-        return Move.illegal();
+        return advance
+                .or(getCaptures(board, from));
     }
 
-    private boolean isDirectionValid(Position from, Position to) {
+    @Override
+    public Bitboard getCaptures(Board board, Position from) {
+        Bitboard self = Bitboard.single(from);
+        return self.shift(getShift() - 1).or(self.shift(getShift() + 1))
+                // Can only move on a capture case if an opponent is there
+                .and(getCaptureBoard(board));
+    }
+
+    private Bitboard getCaptureBoard(Board board) {
+        Bitboard opponentOccupation = board.getPlayerOccupation(getOpponentColor());
+
+        return opponentOccupation
+                .or(getEnPassantBoard(board));
+    }
+
+    private Bitboard getEnPassantBoard(Board board) {
+        engine.Move lastMove = board.getLastMove();
+        if (lastMove == null) {
+            return new Bitboard();
+        }
+
+        Piece lastMovedPiece = board.at(lastMove.to());
+
+        if (lastMovedPiece instanceof Pawn && isDoubleAdvance(lastMove.from(), lastMove.to())) {
+            return Bitboard.single(lastMove.to()).shift(getShift());
+        } else {
+            return new Bitboard();
+        }
+    }
+
+    private int getShift() {
         return switch (getColor()) {
-            case BLACK -> to.rank() < from.rank();
-            case WHITE -> to.rank() > from.rank();
+            case BLACK -> -8;
+            case WHITE -> +8;
         };
-    }
-
-    private boolean isCaptureMove(Position from, Position to) {
-        return abs(to.file() - from.file()) == 1
-                && abs(to.rank() - from.rank()) == 1;
     }
 
     public static boolean isDoubleAdvance(Position from, Position to) {
@@ -99,7 +93,13 @@ public class Pawn extends Piece {
         };
     }
 
-    private boolean shouldPromote(Position position) {
+    @Override
+    public List<PieceType> getPromotionChoices() {
+        return List.of(PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, PieceType.QUEEN);
+    }
+
+    @Override
+    public boolean shouldPromote(Position position) {
         return switch (getColor()) {
             case WHITE -> position.rank() == 7;
             case BLACK -> position.rank() == 0;

@@ -4,6 +4,7 @@ import engine.Position;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLOutput;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -141,5 +142,16 @@ public class BitboardTest {
         Bitboard bitboard = Bitboard.single(Position.fromString("a4"));
 
         assertThat(bitboard.isEmpty()).isFalse();
+    }
+
+    @Test
+    void testStreamCollector() {
+        Bitboard collected = Stream.of(
+                Bitboard.single(Position.fromString("a1")),
+                Bitboard.single(Position.fromString("b1"))
+        ).collect(Bitboard.collect());
+
+        assertThat(collected.value)
+                .isEqualTo(3);
     }
 }

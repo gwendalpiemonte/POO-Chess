@@ -4,15 +4,26 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.Position;
-import engine.move.Move;
+import engine.bitboard.Bitboard;
+
+import java.util.List;
 
 public class Knight extends Piece {
+
+    /**
+     * To improve the readability of the code (you don't want to see the alternative),
+     * we have hardcoded the offsets of the knight for our notation.
+     */
+    private final List<Integer> knightMoveOffsets = List.of(
+            +10,+23,+25,+14,
+            -10,-23,-25,-14
+    );
     public Knight(PlayerColor color) {
         super(color);
     }
 
-    public Knight(Pawn pawn) {
-        super(pawn.getColor());
+    public Knight(Piece promotedPiece) {
+        super(promotedPiece.getColor());
     }
 
     @Override
@@ -21,21 +32,12 @@ public class Knight extends Piece {
     }
 
     @Override
-    public Move getMoveFor(Board board, Position from, Position to) {
-        int rankDistance = to.rank() - from.rank();
-        int fileDistance = to.file() - from.file();
+    public Bitboard getMoves(Board board, Position from) {
+        Bitboard moves = knightMoveOffsets.stream()
+                .map(offset -> Position.fromIndex(from.index() + offset))
+                .filter(Position::isWithinBounds)
+                .collect(Bitboard.collectPositions());
 
-        int absRankDistance = Math.abs(rankDistance);
-        int absFileDistance = Math.abs(fileDistance);
-
-        if ((absRankDistance != 2 || absFileDistance != 1) && (absRankDistance != 1 || absFileDistance != 2)) {
-            return Move.illegal();
-        }
-
-        if (isAlreadyTaken(board, to)) {
-            return Move.illegal();
-        }
-
-        return Move.standard(from, to);
+        return excludeCellsWithAlly(board, moves);
     }
 }

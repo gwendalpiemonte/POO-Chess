@@ -3,11 +3,14 @@ package engine.piece;
 import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
+import engine.CardinalDirection;
 import engine.Position;
-import engine.move.CastlingMove;
-import engine.move.Move;
+import engine.bitboard.Bitboard;
+import engine.piece.traits.MoveListener;
 
-public class King extends Piece {
+import java.util.Arrays;
+
+public class King extends Piece implements MoveListener {
 
     // TODO: This should be put in a super class or an interface (same with the rook)
     private boolean hasMoved;
@@ -17,20 +20,8 @@ public class King extends Piece {
         hasMoved = false;
     }
 
-
-    /**
-     * Marks the piece has having moved
-     */
-    public void setHasMoved() {
-        hasMoved = true;
-    }
-
-    /**
-     * Resets the moved status of the piece.
-     * Only useful for the FENUtils class
-     */
-    public void resetHasMoved() {
-        hasMoved = false;
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
     }
 
     @Override
@@ -38,56 +29,23 @@ public class King extends Piece {
         return PieceType.KING;
     }
 
-    private Move getMove(Board board, Position from, Position to) {
-        int rankDistance = from.rank() - to.rank();
-        int fileDistance = from.file() - to.file();
+    @Override
+    public Bitboard getMoves(Board board, Position from) {
+        // A king can move in all cells adjacent to his (including diagonals)
+        // It can also be rephrased as:
+        // A king can move a single cell in every direction, that is *not* already taken by one of its pieces
+        Bitboard baseMove = Arrays.stream(CardinalDirection.values())
+                .map(direction -> direction.apply(from))
+                .filter(Position::isWithinBounds)
+                .collect(Bitboard.collectPositions());
 
-        if (rankDistance == 0 && fileDistance == 0) {
-            return Move.illegal();
-        }
+        // TODO: Support castle
 
-        if (Math.abs(rankDistance) > 1 || Math.abs(fileDistance) > 1) {
-            return Move.illegal();
-        }
-
-        if (isAlreadyTaken(board, to)) {
-            return Move.illegal();
-        }
-
-        return Move.standard(from, to, b -> setHasMoved());
+        return excludeCellsWithAlly(board, baseMove);
     }
 
     @Override
-    public Move getPseudoLegalMove(Board board, Position from, Position to) {
-        return getMove(board, from, to);
-    }
-
-    @Override
-    public Move getMoveFor(Board board, Position from, Position to) {
-        Move pseudoLegalCheck = getMove(board, from, to);
-
-        int fileDistance = from.file() - to.file();
-
-        boolean isKingSideCastle = fileDistance == -2;
-        int rookFile = isKingSideCastle ? 7 : 0;
-        if (!hasMoved && Math.abs(fileDistance) == 2 && board.at(rookFile, getColor() == PlayerColor.WHITE ? 0 : 7) instanceof Rook rook && !rook.getHasMoved()) {
-            // Check if pieces are on the way
-            int direction = isKingSideCastle ? 1 : -1;
-            for (int file = from.file() + direction; file != rookFile - direction; file += direction) {
-                Position pos = new Position(file, from.rank());
-                if (board.at(pos) != null || !board.getAttackersForPosition(getColor(), pos).isEmpty()) {
-                    return Move.illegal();
-                }
-            }
-
-            return new CastlingMove(from, to, direction);
-        }
-
-        if (!board.getAttackersForPosition(getColor(), to).isEmpty()) {
-            // We cannot move here, as there is someone that attacks this cell
-            return Move.illegal();
-        }
-
-        return pseudoLegalCheck;
+    public void onMove() {
+        hasMoved = true;
     }
 }

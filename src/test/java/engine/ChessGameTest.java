@@ -2,16 +2,11 @@ package engine;
 
 import chess.ChessView;
 import chess.PlayerColor;
-import engine.piece.Pawn;
-import engine.piece.Piece;
 import engine.piece.Rook;
-import engine.Position;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -61,7 +56,8 @@ class ChessGameTest {
 
         Board cloned = original.clone();
 
-        piece.setHasMoved();
+        piece.setHasMoved(true);
+
         // Check that the pieces inside are cloned!
         assertThat(((Rook) cloned.at(0, 0)).getHasMoved())
                 .isFalse();

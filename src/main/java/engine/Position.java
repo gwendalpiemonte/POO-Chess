@@ -7,6 +7,10 @@ package engine;
  * @param rank The given rank
  */
 public record Position(int file, int rank) {
+    public Position(Position position) {
+        this(position.file, position.rank);
+    }
+
     public static int charCoordinateToIndex(char c) {
         c = Character.toLowerCase(c);
         assert (c >= 'a' && c < 'i');
@@ -31,26 +35,41 @@ public record Position(int file, int rank) {
         );
     }
 
+    public Position add(int offset) {
+        return Position.fromIndex(index() + offset);
+    }
+
     /**
-     * Returns the index of a given position
+     * Returns the index of a given position (in 12x12, to ensure )
      *
      * @return The index of the position
      */
     public int index() {
+        return (file() + 2) + ((rank() + 2) * 12);
+    }
+
+    public int indexUnsafe() {
         return file() + rank() * 8;
     }
 
 
     public static Position fromIndex(int index) {
-        assert isIndexWithinBounds(index);
+        // The -2 are here to convert from 12x12 (safe) indexes, to 8x8 (unsafe) indexes
+        return new Position(
+                (index % 12) - 2,
+                (index / 12) - 2
+        );
+    }
 
+    public static Position fromIndexUnsafe(int index) {
         return new Position(
                 index % 8,
                 index / 8
         );
     }
 
-    public static boolean isIndexWithinBounds(int index) {
-        return index < 64 && index >= 0;
+    public boolean isWithinBounds() {
+        return 0 <= rank && rank < 8
+                && 0 <= file && file < 8;
     }
 }
