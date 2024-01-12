@@ -80,5 +80,7 @@ public class KingTest extends AbstractPieceTest {
         assertMoveInvalid("k7/8/8/8/8/8/8/1QK5 w - - 0 1", "c1", "b1");
     }
 
-
+    void testCanGoInFrontOfPawn() {
+        assertMoveValid("8/8/3k4/8/3P4/8/8/8 b - - 0 1", "d6", "d5");
+    }
 }
