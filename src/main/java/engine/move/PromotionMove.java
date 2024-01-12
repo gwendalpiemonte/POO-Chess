@@ -20,9 +20,8 @@ public class PromotionMove implements Move {
     }
 
     @Override
-    public Move addPrompt(Supplier<PromotionChoice> supplier) {
+    public void addPrompt(Supplier<PromotionChoice> supplier) {
         choiceSupplier = supplier;
-        return this;
     }
 
     @Override

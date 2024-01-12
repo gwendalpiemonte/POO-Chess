@@ -17,17 +17,15 @@ public abstract class Piece implements Cloneable {
 
     public abstract PieceType getType();
 
-    /**
-     * TODO: It seems strange that we pass the "from" to an instance of a piece.
-     */
-    public abstract Move getMoveFor(Board board, Position from, Position to);
-
-    public Move getPseudoLegalMove(Board board, Position from, Position to) {
-        return getMoveFor(board, from, to);
-    }
+    public abstract Bitboard getPseudoLegalMoves(Board board, Position from);
 
     public PlayerColor getColor() {
         return color;
+    }
+
+    public boolean isAlreadyTaken(Board board, Position position) {
+        Piece piece = board.at(position);
+        return piece != null && piece.getColor() == getColor();
     }
 
     @Override

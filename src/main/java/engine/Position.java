@@ -30,4 +30,27 @@ public record Position(int file, int rank) {
                 intCoordinateToIndex(input.charAt(1))
         );
     }
+
+    /**
+     * Returns the index of a given position
+     *
+     * @return The index of the position
+     */
+    public int index() {
+        return file() + rank() * 8;
+    }
+
+
+    public static Position fromIndex(int index) {
+        assert isIndexWithinBounds(index);
+
+        return new Position(
+                index % 8,
+                index / 8
+        );
+    }
+
+    public static boolean isIndexWithinBounds(int index) {
+        return index < 64 && index >= 0;
+    }
 }

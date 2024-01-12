@@ -8,13 +8,20 @@ import engine.bitboard.Bitboard;
 import engine.move.check.OrthogonalMove;
 import engine.move.Move;
 
-public class Rook extends Piece {
+import java.util.List;
+
+public class Rook extends SlidingPiece implements MoveListener {
 
     private boolean hasMoved;
 
     public Rook(PlayerColor color) {
         super(color);
         hasMoved = false;
+    }
+
+    @Override
+    public List<CardinalDirection> allowedDirections() {
+        return CardinalDirection.ORTHOGONALS;
     }
 
     /**
@@ -42,13 +49,7 @@ public class Rook extends Piece {
     }
 
     @Override
-    public Move getMoveFor(Board board, Position from, Position to) {
-        boolean isMoveValid = OrthogonalMove.isValid(board, from, to);
-
-        if (!isMoveValid) {
-            return Move.illegal();
-        }
-
-        return Move.standard(from, to, b -> setHasMoved());
+    public void onMove() {
+        hasMoved = true;
     }
 }

@@ -11,8 +11,8 @@ import java.io.StringReader;
 
 /**
  * Creates a new board with in a particular game position for the given FEN string
- *
- * About the FEN notation: https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+ * <p>
+ * About the FEN notation: <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">...</a>
  */
 public class FenUtils {
     private FenUtils() {

@@ -31,8 +31,8 @@ public class Pawn extends Piece {
 
         // You cannot move more than 2 files apart
         if (fileDistance > 1
-            || !isDirectionValid(from, to)
-            || (fileDistance == 1 && !isCaptureMove(from, to))
+                || !isDirectionValid(from, to)
+                || (fileDistance == 1 && !isCaptureMove(from, to))
         ) {
             return Move.illegal();
         }
@@ -40,7 +40,8 @@ public class Pawn extends Piece {
 
         if (isCaptureMove(from, to)) {
             // Check if there is a piece on the target position
-            if (board.at(to) != null) {
+            Piece piece = board.at(to);
+            if (piece != null && piece.getColor() != getColor()) {
                 return Move.standard(from, to);
             }
 
@@ -54,7 +55,7 @@ public class Pawn extends Piece {
             }
         }
 
-        boolean isTargetSquareFree = board.at(from.file(), from.rank() + distance) == null;
+        boolean isTargetSquareFree = board.at(from.file(), from.rank() + distance) == null ;
 
         if (isDoubleAdvance(from, to) && !this.isDeveloped(from)) {
             boolean isIntermediarySquareFree = board.at(from.file(), from.rank() + distance / 2) == null;

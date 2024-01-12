@@ -8,7 +8,12 @@ import engine.move.check.DiagonalMove;
 import engine.move.check.OrthogonalMove;
 import engine.move.Move;
 
-public class Queen extends Piece {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class Queen extends SlidingPiece {
     public Queen(PlayerColor color) {
         super(color);
     }
@@ -23,13 +28,10 @@ public class Queen extends Piece {
     }
 
     @Override
-    public Move getMoveFor(Board board, Position from, Position to) {
-        boolean isMoveValid = DiagonalMove.isValid(board, from, to) || OrthogonalMove.isValid(board, from, to);
+    public List<CardinalDirection> allowedDirections() {
+        List<CardinalDirection> directions = new ArrayList<>(CardinalDirection.DIAGONALS);
+        directions.addAll(CardinalDirection.ORTHOGONALS);
 
-        if (!isMoveValid) {
-            return Move.illegal();
-        }
-
-        return Move.standard(from, to);
+        return directions;
     }
 }

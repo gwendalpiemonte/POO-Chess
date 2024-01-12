@@ -73,4 +73,12 @@ public class KingTest extends AbstractPieceTest {
     void testKingDoesCastleIfTowerIsAttacked() {
         assertMoveValid("1k6/8/8/8/4b3/8/8/R3K3 w Q - 0 1", "e1", "c1");
     }
+
+    @Test
+    void cannotCaptureAlly() {
+        assertMoveInvalid("k7/8/8/8/8/8/8/KQ6 w - - 0 1", "a1", "b1");
+        assertMoveInvalid("k7/8/8/8/8/8/8/1QK5 w - - 0 1", "c1", "b1");
+    }
+
+
 }

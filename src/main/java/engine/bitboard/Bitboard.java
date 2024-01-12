@@ -25,7 +25,7 @@ public class Bitboard {
      * @return
      */
     public static Bitboard single(Position position) {
-        return new Bitboard(1L << index(position));
+        return new Bitboard(1L << position.index());
     }
 
     /**
@@ -36,10 +36,9 @@ public class Bitboard {
      */
     public static Bitboard orthogonal(Position position) {
         long value = 0;
-        long index = index(position);
 
-        long file = index % 8;
-        long rank = index / 8;
+        long file = position.file();
+        long rank = position.rank();
 
         for (int i = 0; i < 8; i++) {
             value |= 1L << (file + i * 8);
@@ -56,11 +55,12 @@ public class Bitboard {
      * @return The bitboard representing the diagonal moves for the given position
      */
     public static Bitboard diagonal(Position position) {
-        long index = index(position);
+        long index = position.index();
         long value = 1L << index;
 
-        long file = index % 8;
-        long rank = index / 8;
+
+        long file = position.file();
+        long rank = position.rank();
 
         for (int i = 1; i < 8; i++) {
             if (rank + i < 8 && file + i < 8) {
@@ -116,23 +116,13 @@ public class Bitboard {
     }
 
     /**
-     * Returns the index of a given position
-     *
-     * @param position The position at which to get the index
-     * @return The index of the position
-     */
-    private static long index(Position position) {
-        return position.file() + position.rank() * 8L;
-    }
-
-    /**
      * Set the bit at position `position` to the value `value`
      *
      * @param position The position to set
      * @param value The value to set at the position
      */
     public void set(Position position, boolean value) {
-        long index = index(position);
+        long index = position.index();
         this.value = (this.value & ~(1L << index)) | ((value ? 1L : 0L) << index);
     }
 

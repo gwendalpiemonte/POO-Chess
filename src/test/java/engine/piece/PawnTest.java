@@ -57,6 +57,12 @@ class PawnTest extends AbstractPieceTest {
     }
 
     @Test
+    void cannotCaptureAlly() {
+        assertMoveInvalid("6rk/8/8/8/8/2R5/3P4/2K5 w - - 0 1", "d2", "c3");
+        assertMoveInvalid("k7/8/8/8/8/5R2/4P3/K7 w - - 0 1", "e2", "f3");
+    }
+
+    @Test
     void testCannotGoBack() {
         assertMoveInvalid("8/8/8/4P3/8/8/8/8 w - - 0 1", "e5", "e4");
     }

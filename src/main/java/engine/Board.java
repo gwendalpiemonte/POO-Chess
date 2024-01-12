@@ -9,7 +9,6 @@ import engine.piece.Pawn;
 import engine.piece.Piece;
 
 import java.util.*;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -92,8 +91,13 @@ public class Board implements Cloneable {
         return moveFor;
     }
 
-    private List<Position> getCheckAttackers() {
-        Position kingPosition = getCurrentPlayerKing();
+    /**
+     * Get a list of positions that attacks the current player's king
+     *
+     * @return The list of positions
+     */
+    public List<Position> getCheckAttackers() {
+        Position kingPosition = getPlayerKing(getCurrentPlayerColor());
         if (kingPosition == null) {
             // This would never happen in a real game, but we still want tests to pass.
             return List.of();
@@ -102,10 +106,16 @@ public class Board implements Cloneable {
         return getAttackersForPosition(getCurrentPlayerColor(), kingPosition);
     }
 
-    private Position getCurrentPlayerKing() {
+    /**
+     * Get the position of the given player color king
+     *
+     * @param playerColor The color of the player of whom to get the king's position
+     * @return The position of the king
+     */
+    private Position getPlayerKing(PlayerColor playerColor) {
         return stream()
                 .filter(e -> e.getValue() instanceof King)
-                .filter(e -> e.getValue().getColor() == getCurrentPlayerColor())
+                .filter(e -> e.getValue().getColor() == playerColor)
                 .findFirst()
                 .map(Map.Entry::getKey)
                 .orElse(null);
@@ -169,8 +179,6 @@ public class Board implements Cloneable {
 
     /**
      * Put the given piece at the given file and rank.
-     * <p>
-     * TODO: Should we provide an atomic way of moving pieces on the board ?
      *
      * @param piece The piece to put
      * @param file  The file at which to put the piece
@@ -182,6 +190,12 @@ public class Board implements Cloneable {
         board[file][rank] = piece;
     }
 
+    /**
+     * Put the given piece at the given position.
+     *
+     * @param piece    The piece to put
+     * @param position The position at which to put the piece
+     */
     public void put(Piece piece, Position position) {
         put(piece, position.file(), position.rank());
     }
@@ -247,16 +261,19 @@ public class Board implements Cloneable {
     }
 
     public Stream<Map.Entry<Position, Piece>> stream() {
-        return IntStream.range(0, board.length)
-                .boxed()
-                .flatMap(file ->
-                        IntStream.range(0, board[file].length)
-                                .filter(rank -> board[file][rank] != null)
-                                .mapToObj(rank -> Map.entry(
-                                        new Position(file, rank),
-                                        board[file][rank]
-                                ))
-                );
+        Stream.Builder<Map.Entry<Position, Piece>> builder = Stream.builder();
+        for (int file = 0; file < 8; file++) {
+            for (int rank = 0; rank < 8; rank++) {
+                if (board[file][rank] != null) {
+                    builder.accept(Map.entry(
+                            new Position(file, rank),
+                            board[file][rank]
+                    ));
+                }
+            }
+        }
+
+        return builder.build();
     }
 
 

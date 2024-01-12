@@ -49,8 +49,11 @@ public class ChessGame implements ChessController {
         ));
 
         board.apply(move);
-
         board.changeTurn();
+
+        if (!board.getCheckAttackers().isEmpty()) {
+            view.displayMessage("Check !");
+        }
 
         return true;
     }
