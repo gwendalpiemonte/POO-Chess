@@ -18,6 +18,13 @@ public abstract class Piece implements Cloneable {
 
     public abstract PieceType getType();
 
+    /**
+     * Returns a `Bitboard` representing the legal move of the piece
+     *
+     * @param board The board on which to checkt the move
+     * @param from The position of the piece
+     * @return The bitboard representing the legal moves
+     */
     public abstract Bitboard getMoves(Board board, Position from);
 
     public Bitboard getCaptures(Board board, Position from) {
@@ -34,6 +41,13 @@ public abstract class Piece implements Cloneable {
         return getOppositeColor(getColor());
     }
 
+    /**
+     * Removes the allied squares from the sourceBitboard
+     *
+     * @param board The chess board
+     * @param sourceBitboard The source bitboard on which to apply the transformation
+     * @return A new bitboard with squares where allied pieces are removed
+     */
     public Bitboard excludeCellsWithAlly(Board board, Bitboard sourceBitboard) {
         Bitboard freeOrCaptureCells = board.getPlayerOccupation(getColor()).not();
 

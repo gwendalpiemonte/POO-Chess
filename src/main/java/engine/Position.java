@@ -1,7 +1,9 @@
 package engine;
 
 /**
- * Represents a position on the board
+ * Represents a position on a chess board.
+ * <br>
+ * The positions are zero-based.
  *
  * @param file The given file
  * @param rank The given rank
@@ -68,6 +70,11 @@ public record Position(int file, int rank) {
         );
     }
 
+    /**
+     * Checks if the position is within the bounds of a chess board
+     *
+     * @return true if within bounds, false otherwise
+     */
     public boolean isWithinBounds() {
         return 0 <= rank && rank < 8
                 && 0 <= file && file < 8;

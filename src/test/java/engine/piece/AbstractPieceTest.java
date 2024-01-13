@@ -1,6 +1,7 @@
 package engine.piece;
 
 import engine.Board;
+import engine.Move;
 import engine.Position;
 import engine.utils.FenParser;
 import harness.JsonExportTestListener;
@@ -52,11 +53,9 @@ public class AbstractPieceTest {
         Position piecePos = Position.fromString(piece);
         Position targetPos = Position.fromString(target);
 
-
-
         JsonExportTestListener.registerTest(boardDef, piece, target, description, expected);
 
-        boolean actual = board.isMoveValid(piecePos, targetPos);
+        boolean actual = board.isMoveValid(new Move(piecePos, targetPos));
 
         assertThat(actual)
                 .as("Unexpected validity of move")

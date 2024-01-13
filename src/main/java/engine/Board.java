@@ -19,7 +19,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * Represents a chess board with its pieces
+ * Represents a chess board with its pieces.
+ *
+ * Solves checked positions by copying the board internally.
  */
 public class Board implements Cloneable {
     private final Piece[][] board;
@@ -51,7 +53,7 @@ public class Board implements Cloneable {
         // Do not transfer the views!
     }
 
-    public void putView(ChessView view) {
+    public void registerView(ChessView view) {
         views.add(view);
     }
 
@@ -63,9 +65,15 @@ public class Board implements Cloneable {
         this.lastMove = lastMove;
     }
 
-    public boolean isMoveValid(Position from, Position to) {
+    /**
+     * Checks if the move is valid using the current board state
+     *
+     * @param move The move to check
+     * @return true if the move is valid, false otherwise
+     */
+    public boolean isMoveValid(Move move) {
         // Check pseudo legal move
-        Piece piece = at(from);
+        Piece piece = at(move.from());
 
         if (piece == null) {
             return false;
@@ -75,52 +83,78 @@ public class Board implements Cloneable {
             return false;
         }
 
-
-        Bitboard moves = piece.getMoves(this, from);
+        Bitboard moves = piece.getMoves(this, move.from());
 
         // As we are in the validate function, we can or the special moves
         if (piece instanceof HasSpecialMove specialMovePiece) {
             moves = moves
-                    .or(specialMovePiece.getSpecialMoves(this, from));
+                    .or(specialMovePiece.getSpecialMoves(this, move.from()));
         }
 
-        if (!moves.get(to)) {
+        if (!moves.get(move.to())) {
             // Illegal move
             return false;
         }
 
         // Simulate move for checks
-        return !moveCausesCheck(from, to);
+        return !moveCausesCheck(move);
     }
 
-    public Optional<PromotionChoice[]> getPromotion(Position from, Position to) {
-        Piece piece = at(from);
+    /**
+     * Returns a {@link PromotionChoice} given the move of a piece on the board.
+     *
+     * @param move The move to check
+     * @return An optional {@link PromotionChoice} that represents the promotion of the piece
+     */
+    public Optional<PromotionChoice[]> getPromotion(Move move) {
+        Piece piece = at(move.from());
         if (piece instanceof PromotablePiece promotablePiece
-                && promotablePiece.shouldPromote(to)) {
+                && promotablePiece.shouldPromote(move.to())) {
             return Optional.of(PromotionUtils.getPromotionChoices(promotablePiece.getPromotionChoices()));
         } else {
             return Optional.empty();
         }
     }
 
-    public void apply(Position from, Position to) {
+    /**
+     * Applies the move to the current board state
+     *
+     * @param move The move to apply
+     */
+    public void apply(Move move) {
         // You should not call without a choice if it is a promotion
-        assert getPromotion(from, to).isEmpty();
+        assert getPromotion(move).isEmpty();
 
-        applyInternal(from, to);
+        applyInternal(move);
+
+        changeTurn();
     }
 
-    public void apply(Position from, Position to, PromotionChoice promotionChoice) {
+    /**
+     * Applies the move and promotionChoice to the current board state
+     *
+     * @param move The move to apply
+     * @param promotionChoice The promotionChoice to apply
+     */
+    public void apply(Move move, PromotionChoice promotionChoice) {
         // You should not call with a choice if it is  not a promotion
-        assert getPromotion(from, to).isPresent();
+        assert getPromotion(move).isPresent();
 
-        applyInternal(from, to);
+        applyInternal(move);
 
         // Replace the target
-        Piece promoted = at(to);
-        put(promotionChoice.promote(promoted), to);
+        Piece promoted = at(move.to());
+        put(promotionChoice.promote(promoted), move.to());
+
+        changeTurn();
     }
 
+    /**
+     * Checks whether the player with the given `playerColor` is in check.
+     *
+     * @param playerColor The color of the player for which to check
+     * @return true if the player is in check, false otherwise
+     */
     public boolean isInCheck(PlayerColor playerColor) {
         Position playerKingPosition = getPlayerKingPosition(getCurrentPlayerColor());
         // This conditions allows some tests to pass.
@@ -129,12 +163,18 @@ public class Board implements Cloneable {
             return false;
         }
 
-        return getAttackedCells(playerColor)
+        return getAttackedSquares(playerColor)
                 // ...and see if the king is attacked.
                 .get(playerKingPosition);
     }
 
-    public Bitboard getAttackedCells(PlayerColor playerColor) {
+    /**
+     * Get all the attacked squares for a given `playerColor`.
+     *
+     * @param playerColor The player color for which to get the attacked squares
+     * @return A bitboard representing the attacked squares
+     */
+    public Bitboard getAttackedSquares(PlayerColor playerColor) {
         return stream()
                 // For all opponent's pieces...
                 .filter(piece -> piece.getValue().getColor() != playerColor)
@@ -144,50 +184,57 @@ public class Board implements Cloneable {
                 .collect(Bitboard.collect());
     }
 
-    private boolean moveCausesCheck(Position from, Position to) {
+    /**
+     * Checks whether the move causes a check. This method copies the board and applies the move on the
+     * copy.
+     *
+     * @param move The move to check
+     * @return true if the move causes a check, false otherwise
+     */
+    private boolean moveCausesCheck(Move move) {
         Board copy = new Board(this);
 
-        copy.applyInternal(from, to);
+        copy.applyInternal(move);
 
         return copy.isInCheck(getCurrentPlayerColor());
     }
 
     // This function exists for the moveCausesCheck function. If not, the promotion assertion would get
     // caught up at times.
-    private void applyInternal(Position from, Position to) {
-        Piece piece = at(from);
+    private void applyInternal(Move move) {
+        Piece piece = at(move.from());
 
         if (piece instanceof HasSpecialMove specialMovePiece
-                && specialMovePiece.getSpecialMoves(this, from).get(to)) {
+                && specialMovePiece.getSpecialMoves(this, move.from()).get(move.to())) {
 
-            specialMovePiece.applySpecialMove(this, from, to);
+            specialMovePiece.applySpecialMove(this, move);
 
             return;
         }
 
-        Piece target = at(to);
-        if (piece.getCaptures(this, from).get(to)) {
+        Piece target = at(move.to());
+        if (piece.getCaptures(this, move.from()).get(move.to())) {
             if (target == null && piece instanceof Pawn) {
                 // En-passant, so delete the piece from the last move
                 remove(lastMove.to());
             } else {
                 // This is considered a capture, so we delete the piece at the destination (or throw an error if empty)
                 assert target != null;
-                remove(to);
+                remove(move.to());
             }
         } else {
             // This is not a capture, but still check if the piece is null, as a safety measure.
             assert target == null;
         }
 
-        remove(from);
-        put(piece, to);
+        remove(move.from());
+        put(piece, move.to());
 
         if (piece instanceof MoveListener listener) {
             listener.onMove();
         }
 
-        lastMove = new Move(from, to);
+        lastMove = move;
     }
 
     /**
@@ -234,7 +281,7 @@ public class Board implements Cloneable {
      * @param rank  The rank at which to put the piece
      */
     public void put(Piece piece, int file, int rank) {
-        notifyView(piece, file, rank);
+        notifyViews(piece, file, rank);
 
         board[file][rank] = piece;
     }
@@ -286,15 +333,22 @@ public class Board implements Cloneable {
         this.currentPlayerColor = currentPlayerColor;
     }
 
-    public void changeTurn() {
+    /**
+     * Change the current player to the opposite colored one
+     */
+    private void changeTurn() {
         currentPlayerColor = getOppositeColor(currentPlayerColor);
     }
 
-    private void notifyView(Piece piece, int file, int rank) {
+    private void notifyViews(Piece piece, int file, int rank) {
+        views.forEach(view -> notifyView(view, piece, file, rank));
+    }
+
+    private void notifyView(ChessView view, Piece piece, int file, int rank) {
         if (piece != null) {
-            views.forEach(v -> v.putPiece(piece.getType(), piece.getColor(), file, rank));
+            view.putPiece(piece.getType(), piece.getColor(), file, rank);
         } else {
-            views.forEach(v -> v.removePiece(file, rank));
+            view.removePiece(file, rank);
         }
     }
 

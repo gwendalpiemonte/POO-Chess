@@ -2,7 +2,6 @@ package engine;
 
 import chess.ChessController;
 import chess.ChessView;
-import chess.PieceType;
 import chess.PlayerColor;
 import engine.piece.*;
 import engine.promotion.*;
@@ -11,6 +10,9 @@ import engine.utils.FenParser;
 import java.util.Optional;
 
 public class ChessGame implements ChessController {
+    /**
+     * The starting board position in FEN notation
+     */
     public static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     private ChessView view;
@@ -30,14 +32,13 @@ public class ChessGame implements ChessController {
             return false;
         }
 
-        Position from = new Position(fromX, fromY);
-        Position to = new Position(toX, toY);
+        Move move = new Move(new Position(fromX, fromY), new Position(toX, toY));
 
-        if (!board.isMoveValid(from, to)) {
+        if (!board.isMoveValid(move)) {
             return false;
         }
 
-        Optional<PromotionChoice[]> promotion = board.getPromotion(from, to);
+        Optional<PromotionChoice[]> promotion = board.getPromotion(move);
         if (promotion.isPresent()) {
             PromotionChoice choice = view.askUser(
                     "Promotion",
@@ -45,12 +46,10 @@ public class ChessGame implements ChessController {
                     promotion.get()
             );
 
-            board.apply(from, to, choice);
+            board.apply(move, choice);
         } else {
-            board.apply(from, to);
+            board.apply(move);
         }
-
-        board.changeTurn();
 
         if (board.isInCheck(board.getCurrentPlayerColor())) {
             view.displayMessage("Check !");
@@ -71,7 +70,7 @@ public class ChessGame implements ChessController {
             }
         }
 
-        board.putView(view);
+        board.registerView(view);
     }
 
 

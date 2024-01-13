@@ -4,6 +4,7 @@ import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
 import engine.CardinalDirection;
+import engine.Move;
 import engine.Position;
 import engine.bitboard.Bitboard;
 import engine.piece.traits.HasSpecialMove;
@@ -86,7 +87,7 @@ public class King extends Piece implements MoveListener, HasSpecialMove {
                 .isEmpty();
 
         boolean doesNotPassACheck = getKingMoveBitboard(side, from)
-                .and(board.getAttackedCells(getColor()))
+                .and(board.getAttackedSquares(getColor()))
                 .isEmpty();
 
         if (rookHasNotMoved && hasVisibility && doesNotPassACheck) {
@@ -124,19 +125,19 @@ public class King extends Piece implements MoveListener, HasSpecialMove {
     }
 
     @Override
-    public void applySpecialMove(Board board, Position from, Position to) {
+    public void applySpecialMove(Board board, Move move) {
         // Remove the king at from.
-        board.put(board.at(from), to);
-        board.remove(from);
+        board.put(board.at(move.from()), move.to());
+        board.remove(move.from());
 
         // Move the rook
-        CastleSide side = getSideFromMove(from, to);
-        board.put(board.at(side.getRookPosition(from)), side.getTargetRookPosition(from));
-        board.remove(side.getRookPosition(from));
+        CastleSide side = getSideFromMove(move);
+        board.put(board.at(side.getRookPosition(move.from())), side.getTargetRookPosition(move.from()));
+        board.remove(side.getRookPosition(move.from()));
     }
 
-    private CastleSide getSideFromMove(Position from, Position to) {
-        if (from.file() - to.file() > 0) {
+    private CastleSide getSideFromMove(Move move) {
+        if (move.from().file() - move.to().file() > 0) {
             return CastleSide.QUEEN_SIDE;
         } else {
             return CastleSide.KING_SIDE;

@@ -1,6 +1,7 @@
 package engine.piece.traits;
 
 import engine.Board;
+import engine.Move;
 import engine.Position;
 import engine.bitboard.Bitboard;
 
@@ -25,5 +26,5 @@ public interface HasSpecialMove {
      * @apiNote The implementation of this function <b>must</b> move the piece itself.
      * This allows for implementations where the piece does not move to the indicated position.
      */
-    void applySpecialMove(Board board, Position from, Position to);
+    void applySpecialMove(Board board, Move move);
 }

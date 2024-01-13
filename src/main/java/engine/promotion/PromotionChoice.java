@@ -5,7 +5,7 @@ import chess.PieceType;
 import engine.piece.*;
 
 /**
- * Represents a pawn promotion to an other piece type the player makes
+ * Represents a pawn promotion to another piece type the player makes
  */
 public class PromotionChoice implements ChessView.UserChoice {
 

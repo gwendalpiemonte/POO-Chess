@@ -48,6 +48,23 @@ class ChessGameTest {
     }
 
     @Test
+    void testChangeCurrentPlayerColorOnMove() {
+        ChessGame chessGame = new ChessGame();
+        chessGame.start(chessView);
+
+        chessGame.newGame();
+
+        PlayerColor playerColor = chessGame.getCurrentPlayer();
+
+        Position from = Position.fromString("e2");
+        Position to = Position.fromString("e4");
+
+        chessGame.move(from.file(), from.rank(), to.file(), to.rank());
+
+        assertThat(playerColor).isNotEqualTo(chessGame.getCurrentPlayer());
+    }
+
+    @Test
     void boardIsCloneable() {
         Board original = new Board();
         // Insert a piece

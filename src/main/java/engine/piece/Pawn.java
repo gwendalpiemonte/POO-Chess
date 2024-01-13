@@ -3,6 +3,7 @@ package engine.piece;
 import chess.PieceType;
 import chess.PlayerColor;
 import engine.Board;
+import engine.Move;
 import engine.Position;
 import engine.bitboard.Bitboard;
 import engine.piece.traits.PromotablePiece;
@@ -65,13 +66,18 @@ public class Pawn extends Piece implements PromotablePiece {
 
         Piece lastMovedPiece = board.at(lastMove.to());
 
-        if (lastMovedPiece instanceof Pawn && isDoubleAdvance(lastMove.from(), lastMove.to())) {
+        if (lastMovedPiece instanceof Pawn && isDoubleAdvance(lastMove)) {
             return Bitboard.single(lastMove.to()).shift(getShift());
         } else {
             return new Bitboard();
         }
     }
 
+    /**
+     * Returns the bitboard shift value that represents the pawn advancement
+     *
+     * @return The shift amount
+     */
     private int getShift() {
         return switch (getColor()) {
             case BLACK -> -8;
@@ -79,13 +85,24 @@ public class Pawn extends Piece implements PromotablePiece {
         };
     }
 
-    public static boolean isDoubleAdvance(Position from, Position to) {
-        int distance = to.rank() - from.rank();
-        int absDistance = abs(distance);
+    /**
+     * Returns true if the move advances two ranks
+     *
+     * @param move The move to check
+     * @return true if the move advances two ranks
+     */
+    public static boolean isDoubleAdvance(Move move) {
+        int distance = move.to().rank() - move.from().rank();
 
-        return absDistance == 2;
+        return abs(distance) == 2;
     }
 
+    /**
+     * Checks whether the pawn is developed or not (has moved from its starting rank)
+     *
+     * @param from The position to check
+     * @return true if the position's rank is the starting rank for the given color
+     */
     private boolean isDeveloped(Position from) {
         return switch (getColor()) {
             case BLACK -> from.rank() != 6;
