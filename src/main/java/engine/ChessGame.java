@@ -13,7 +13,7 @@ public class ChessGame implements ChessController {
     /**
      * The starting board position in FEN notation
      */
-    public static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String START_BOARD_FEN = "rn2k1nr/pp4pp/3p4/q1pP1p2/P1P4b/1b2pPRP/1P1NP1PQ/2B1KBNR b Kkq - 0 1";
 
     private ChessView view;
 
@@ -50,6 +50,18 @@ public class ChessGame implements ChessController {
         } else {
             board.apply(move);
         }
+
+        if (!board.hasLegalMove(board.getCurrentPlayerColor())) {
+            // We are either in a stalemate or a checkmate!
+            if (board.isInCheck(board.getCurrentPlayerColor())) {
+                view.displayMessage("Checkmate !");
+            } else {
+                view.displayMessage("Egalité par PAT !");
+            }
+
+            return true;
+        }
+
 
         if (board.isInCheck(board.getCurrentPlayerColor())) {
             view.displayMessage("Check !");

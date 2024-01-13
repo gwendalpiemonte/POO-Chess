@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 
 /**
  * Represents a chess board with its pieces.
- *
  * Solves checked positions by copying the board internally.
  */
 public class Board implements Cloneable {
@@ -97,7 +96,7 @@ public class Board implements Cloneable {
         }
 
         // Simulate move for checks
-        return !moveCausesCheck(move);
+        return !moveCausesCheck(move, getCurrentPlayerColor());
     }
 
     /**
@@ -168,6 +167,22 @@ public class Board implements Cloneable {
                 .get(playerKingPosition);
     }
 
+    public boolean hasLegalMove(PlayerColor color) {
+        return stream()
+                .filter(e -> e.getValue().getColor() == color)
+                .anyMatch(entry -> {
+                    Bitboard legalMoves = getLegalMoves(entry.getKey(), color);
+
+                    return !legalMoves.isEmpty();
+                });
+    }
+
+    private Bitboard getLegalMoves(Position piecePosition, PlayerColor color) {
+        return at(piecePosition).getMoves(this, piecePosition).stream()
+                .filter(move -> !moveCausesCheck(new Move(piecePosition, move), color))
+                .collect(Bitboard.collectPositions());
+    }
+
     /**
      * Get all the attacked squares for a given `playerColor`.
      *
@@ -191,12 +206,12 @@ public class Board implements Cloneable {
      * @param move The move to check
      * @return true if the move causes a check, false otherwise
      */
-    private boolean moveCausesCheck(Move move) {
+    private boolean moveCausesCheck(Move move, PlayerColor color) {
         Board copy = new Board(this);
 
         copy.applyInternal(move);
 
-        return copy.isInCheck(getCurrentPlayerColor());
+        return copy.isInCheck(color);
     }
 
     // This function exists for the moveCausesCheck function. If not, the promotion assertion would get

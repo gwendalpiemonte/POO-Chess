@@ -63,13 +63,6 @@ public record Position(int file, int rank) {
         );
     }
 
-    public static Position fromIndexUnsafe(int index) {
-        return new Position(
-                index % 8,
-                index / 8
-        );
-    }
-
     /**
      * Checks if the position is within the bounds of a chess board
      *

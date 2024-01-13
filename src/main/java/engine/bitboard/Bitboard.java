@@ -8,6 +8,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 public class Bitboard {
     /**
@@ -32,6 +33,9 @@ public class Bitboard {
      * @return The resulting bitboard
      */
     public static Bitboard single(Position position) {
+        if (!position.isWithinBounds()) {
+            return new Bitboard();
+        }
         return new Bitboard(1L << position.indexUnsafe());
     }
 
@@ -184,8 +188,9 @@ public class Bitboard {
      * Slide multiple times (create a trace of x cells long in the given offset)
      * <br/>
      * This is equivalent of doing x times the following operation: {@code board.or(board.slide(offset))}
+     *
      * @param offset The slide to do on each operation
-     * @param count The number of times to slide
+     * @param count  The number of times to slide
      * @return The resulting bitboard
      */
     public Bitboard cumulativeShift(int offset, int count) {
@@ -196,6 +201,21 @@ public class Bitboard {
         }
 
         return cloned;
+    }
+
+    public Stream<Position> stream() {
+        Stream.Builder<Position> builder = Stream.builder();
+
+        for (int file = 0; file < 8; file++) {
+            for (int rank = 0; rank < 8; rank++) {
+                Position position = new Position(file, rank);
+                if (get(position)) {
+                    builder.accept(position);
+                }
+            }
+        }
+
+        return builder.build();
     }
 
     @Override

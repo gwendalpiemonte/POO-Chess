@@ -17,10 +17,6 @@ public class Pawn extends Piece implements PromotablePiece {
         super(color);
     }
 
-    public Pawn(Piece promotedPiece) {
-        super(promotedPiece.getColor());
-    }
-
     @Override
     public PieceType getType() {
         return PieceType.PAWN;
@@ -45,8 +41,8 @@ public class Pawn extends Piece implements PromotablePiece {
 
     @Override
     public Bitboard getCaptures(Board board, Position from) {
-        Bitboard self = Bitboard.single(from);
-        return self.shift(getShift() - 1).or(self.shift(getShift() + 1))
+        return Bitboard.single(from.add(getOffset() - 1))
+                .or(Bitboard.single(from.add(getOffset() + 1)))
                 // Can only move on a capture case if an opponent is there
                 .and(getCaptureBoard(board));
     }
@@ -82,6 +78,18 @@ public class Pawn extends Piece implements PromotablePiece {
         return switch (getColor()) {
             case BLACK -> -8;
             case WHITE -> +8;
+        };
+    }
+
+    /**
+     * Returns the position offset value that represents the pawn advancement
+     *
+     * @return The offset amount
+     */
+    private int getOffset() {
+        return switch (getColor()) {
+            case BLACK -> -12;
+            case WHITE -> +12;
         };
     }
 
