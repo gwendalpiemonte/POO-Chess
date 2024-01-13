@@ -29,7 +29,7 @@ public class Bitboard {
      * Creates a new bitboard with the square at `position` set to one.
      *
      * @param position The position of the square to set at one
-     * @return
+     * @return The resulting bitboard
      */
     public static Bitboard single(Position position) {
         return new Bitboard(1L << position.indexUnsafe());
@@ -145,6 +145,11 @@ public class Bitboard {
         return new Bitboard(this.value | board.value);
     }
 
+    // Used for the Collectors, as a mutable item is required.
+    private void mutableOr(Bitboard bitboard) {
+        this.value |= bitboard.value;
+    }
+
     public Bitboard xor(Bitboard board) {
         return new Bitboard(this.value ^ board.value);
     }
@@ -175,43 +180,56 @@ public class Bitboard {
         return value == 0;
     }
 
+    /**
+     * Slide multiple times (create a trace of x cells long in the given offset)
+     * <br/>
+     * This is equivalent of doing x times the following operation: {@code board.or(board.slide(offset))}
+     * @param offset The slide to do on each operation
+     * @param count The number of times to slide
+     * @return The resulting bitboard
+     */
+    public Bitboard cumulativeShift(int offset, int count) {
+        Bitboard cloned = new Bitboard(this.value);
+
+        for (int i = 0; i < count; ++i) {
+            cloned.mutableOr(cloned.shift(offset));
+        }
+
+        return cloned;
+    }
+
     @Override
     public String toString() {
         return Long.toString(value);
     }
 
-    public static class BitboardHolder {
-        private Bitboard bitboard = new Bitboard();
-    }
-    public static Collector<Bitboard, BitboardHolder, Bitboard> collect() {
-        return new Collector<Bitboard, BitboardHolder, Bitboard>() {
+    public static Collector<Bitboard, Bitboard, Bitboard> collect() {
+        return new Collector<>() {
             @Override
-            public Supplier<BitboardHolder> supplier() {
-                return BitboardHolder::new;
+            public Supplier<Bitboard> supplier() {
+                return Bitboard::new;
             }
 
             @Override
-            public BiConsumer<BitboardHolder, Bitboard> accumulator() {
-                return (holder, other) -> holder.bitboard = holder.bitboard.or(other);
+            public BiConsumer<Bitboard, Bitboard> accumulator() {
+                return Bitboard::mutableOr;
             }
 
             @Override
-            public BinaryOperator<BitboardHolder> combiner() {
-                return (bitboardHolder, bitboardHolder2) -> {
-                    bitboardHolder.bitboard = bitboardHolder.bitboard.or(bitboardHolder2.bitboard);
-                    return bitboardHolder;
-                };
+            public BinaryOperator<Bitboard> combiner() {
+                return Bitboard::or;
             }
 
             @Override
-            public Function<BitboardHolder, Bitboard> finisher() {
-                return bitboardHolder -> bitboardHolder.bitboard;
+            public Function<Bitboard, Bitboard> finisher() {
+                return Function.identity();
             }
 
             @Override
             public Set<Characteristics> characteristics() {
                 return Set.of(
-                        Characteristics.UNORDERED
+                        Characteristics.UNORDERED,
+                        Characteristics.IDENTITY_FINISH
                 );
             }
         };

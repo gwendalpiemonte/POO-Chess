@@ -1,18 +1,21 @@
 package engine;
 
 import chess.ChessView;
-import chess.PieceType;
 import chess.PlayerColor;
 import engine.bitboard.Bitboard;
 import engine.piece.King;
 import engine.piece.Pawn;
 import engine.piece.Piece;
+import engine.piece.traits.HasSpecialMove;
 import engine.piece.traits.MoveListener;
 import engine.piece.traits.PromotablePiece;
 import engine.promotion.PromotionChoice;
 import engine.promotion.PromotionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -72,7 +75,14 @@ public class Board implements Cloneable {
             return false;
         }
 
+
         Bitboard moves = piece.getMoves(this, from);
+
+        // As we are in the validate function, we can or the special moves
+        if (piece instanceof HasSpecialMove specialMovePiece) {
+            moves = moves
+                    .or(specialMovePiece.getSpecialMoves(this, from));
+        }
 
         if (!moves.get(to)) {
             // Illegal move
@@ -119,15 +129,19 @@ public class Board implements Cloneable {
             return false;
         }
 
+        return getAttackedCells(playerColor)
+                // ...and see if the king is attacked.
+                .get(playerKingPosition);
+    }
+
+    public Bitboard getAttackedCells(PlayerColor playerColor) {
         return stream()
                 // For all opponent's pieces...
                 .filter(piece -> piece.getValue().getColor() != playerColor)
                 // ...get their possible moves...
                 .map(piece -> piece.getValue().getMoves(this, piece.getKey()))
-                // ...combine them...
-                .collect(Bitboard.collect())
-                // ...and see if the king is attacked.
-                .get(playerKingPosition);
+                // ...combine them.
+                .collect(Bitboard.collect());
     }
 
     private boolean moveCausesCheck(Position from, Position to) {
@@ -142,6 +156,14 @@ public class Board implements Cloneable {
     // caught up at times.
     private void applyInternal(Position from, Position to) {
         Piece piece = at(from);
+
+        if (piece instanceof HasSpecialMove specialMovePiece
+                && specialMovePiece.getSpecialMoves(this, from).get(to)) {
+
+            specialMovePiece.applySpecialMove(this, from, to);
+
+            return;
+        }
 
         Piece target = at(to);
         if (piece.getCaptures(this, from).get(to)) {
@@ -202,27 +224,6 @@ public class Board implements Cloneable {
      */
     public Piece at(Position position) {
         return at(position.file(), position.rank());
-    }
-
-    /**
-     * Returns true if the square at `position` is occupied by a piece, false otherwise
-     *
-     * @param position The position at which to check
-     * @return true if square is occupied, false otherwise
-     */
-    public boolean isOccupied(Position position) {
-        return at(position) != null;
-    }
-
-    /**
-     * Returns true if the square at `file` and `rank` is occupied by a piece, false otherwise
-     *
-     * @param file The file at which to check
-     * @param rank The rank at which to rank
-     * @return true if square is occupied, false otherwise
-     */
-    public boolean isOccupied(int file, int rank) {
-        return at(file, rank) != null;
     }
 
     /**
