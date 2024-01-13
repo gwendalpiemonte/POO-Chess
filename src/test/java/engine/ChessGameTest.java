@@ -2,16 +2,11 @@ package engine;
 
 import chess.ChessView;
 import chess.PlayerColor;
-import engine.piece.Pawn;
-import engine.piece.Piece;
 import engine.piece.Rook;
-import engine.Position;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -53,6 +48,23 @@ class ChessGameTest {
     }
 
     @Test
+    void testChangeCurrentPlayerColorOnMove() {
+        ChessGame chessGame = new ChessGame();
+        chessGame.start(chessView);
+
+        chessGame.newGame();
+
+        PlayerColor playerColor = chessGame.getCurrentPlayer();
+
+        Position from = Position.fromString("e2");
+        Position to = Position.fromString("e4");
+
+        chessGame.move(from.file(), from.rank(), to.file(), to.rank());
+
+        assertThat(playerColor).isNotEqualTo(chessGame.getCurrentPlayer());
+    }
+
+    @Test
     void boardIsCloneable() {
         Board original = new Board();
         // Insert a piece
@@ -61,7 +73,8 @@ class ChessGameTest {
 
         Board cloned = original.clone();
 
-        piece.setHasMoved();
+        piece.setHasMoved(true);
+
         // Check that the pieces inside are cloned!
         assertThat(((Rook) cloned.at(0, 0)).getHasMoved())
                 .isFalse();

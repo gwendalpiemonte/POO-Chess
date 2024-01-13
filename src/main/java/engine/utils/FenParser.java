@@ -2,6 +2,7 @@ package engine.utils;
 
 import chess.PlayerColor;
 import engine.Board;
+import engine.Move;
 import engine.Position;
 import engine.piece.*;
 
@@ -14,8 +15,8 @@ import java.io.StringReader;
  * <p>
  * About the FEN notation: <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">...</a>
  */
-public class FenUtils {
-    private FenUtils() {
+public class FenParser {
+    private FenParser() {
     }
 
     public static Board load(String notation) {
@@ -61,13 +62,15 @@ public class FenUtils {
                     case 'b' -> new Bishop(color);
                     case 'r' -> {
                         Rook rook = new Rook(color);
-                        rook.setHasMoved();
+                        // We set the flag to possibly reset it later.
+                        // This avoids a lookahead in the FEN string.
+                        rook.setHasMoved(true);
                         yield rook;
                     }
                     case 'q' -> new Queen(color);
                     case 'k' -> {
                         King king = new King(color);
-                        king.setHasMoved();
+                        king.setHasMoved(true);
                         yield king;
                     }
                     default -> throw new RuntimeException("The FEN notation is invalid");
@@ -104,11 +107,11 @@ public class FenUtils {
                 PlayerColor player = Character.isUpperCase(currentChar) ? PlayerColor.WHITE : PlayerColor.BLACK;
                 // You can always set the king as not moved if a given player can castle
                 int homeRank = player == PlayerColor.WHITE ? 0 : 7;
-                ((King) board.at(4, homeRank)).resetHasMoved();
+                ((King) board.at(4, homeRank)).setHasMoved(false);
 
                 switch (Character.toLowerCase(currentChar)) {
-                    case 'k' -> ((Rook) board.at(7, homeRank)).resetHasMoved();
-                    case 'q' -> ((Rook) board.at(0, homeRank)).resetHasMoved();
+                    case 'k' -> ((Rook) board.at(7, homeRank)).setHasMoved(false);
+                    case 'q' -> ((Rook) board.at(0, homeRank)).setHasMoved(false);
                 }
 
             } while ((currentChar = reader.read()) != ' ');
@@ -127,10 +130,12 @@ public class FenUtils {
             // in the FEN notation, this position is the case where the pawn can go to do an en-passant.
             // To get the actual piece, we need to get the new position.
             // (As it is the piece of the non-playing player, we invert the direction from the expected one)
-            int rankDiff = board.getCurrentPlayerColor() == PlayerColor.WHITE ? -1 : +1;
-            Position piecePos = new Position(enPassantPos.file(), enPassantPos.rank() + rankDiff);
+            int rankDiff = board.getCurrentPlayerColor() == PlayerColor.WHITE ? +1 : -1;
 
-            board.setEnPassantCandidate((Pawn) board.at(piecePos));
+            board.setLastMove(new Move(
+                    new Position(enPassantPos.file(), enPassantPos.rank() + rankDiff),
+                    new Position(enPassantPos.file(), enPassantPos.rank() - rankDiff)
+            ));
         }
     }
 }

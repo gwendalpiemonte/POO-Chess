@@ -2,15 +2,18 @@ package engine;
 
 import chess.ChessController;
 import chess.ChessView;
-import chess.PieceType;
 import chess.PlayerColor;
 import engine.piece.*;
 import engine.promotion.*;
-import engine.move.Move;
-import engine.utils.FenUtils;
+import engine.utils.FenParser;
+
+import java.util.Optional;
 
 public class ChessGame implements ChessController {
-    public static final String START_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    /**
+     * The starting board position in FEN notation
+     */
+    public static final String START_BOARD_FEN = "rn2k1nr/pp4pp/3p4/q1pP1p2/P1P4b/1b2pPRP/1P1NP1PQ/2B1KBNR b Kkq - 0 1";
 
     private ChessView view;
 
@@ -29,29 +32,38 @@ public class ChessGame implements ChessController {
             return false;
         }
 
-        Position from = new Position(fromX, fromY);
-        Position to = new Position(toX, toY);
+        Move move = new Move(new Position(fromX, fromY), new Position(toX, toY));
 
-        Move move = board.getMoveFor(from, to);
-
-        if (!move.isValid()) {
-            System.out.println("Invalid move.");
+        if (!board.isMoveValid(move)) {
             return false;
         }
 
-        move.addPrompt(() -> view.askUser(
-                "Promotion",
-                "En quelle pièce souhaitez-vous promouvoir votre pion ?",
-                new PromotionChoice("Tour", PieceType.ROOK),
-                new PromotionChoice("Cavalier", PieceType.KNIGHT),
-                new PromotionChoice("Fou", PieceType.BISHOP),
-                new PromotionChoice("Dame", PieceType.QUEEN)
-        ));
+        Optional<PromotionChoice[]> promotion = board.getPromotion(move);
+        if (promotion.isPresent()) {
+            PromotionChoice choice = view.askUser(
+                    "Promotion",
+                    "En quelle pièce souhaitez-vous promouvoir votre pion ?",
+                    promotion.get()
+            );
 
-        board.apply(move);
-        board.changeTurn();
+            board.apply(move, choice);
+        } else {
+            board.apply(move);
+        }
 
-        if (!board.getCheckAttackers().isEmpty()) {
+        if (!board.hasLegalMove(board.getCurrentPlayerColor())) {
+            // We are either in a stalemate or a checkmate!
+            if (board.isInCheck(board.getCurrentPlayerColor())) {
+                view.displayMessage("Checkmate !");
+            } else {
+                view.displayMessage("Egalité par PAT !");
+            }
+
+            return true;
+        }
+
+
+        if (board.isInCheck(board.getCurrentPlayerColor())) {
             view.displayMessage("Check !");
         }
 
@@ -70,13 +82,13 @@ public class ChessGame implements ChessController {
             }
         }
 
-        board.putView(view);
+        board.registerView(view);
     }
 
 
     @Override
     public void newGame() {
-        init(FenUtils.load(START_BOARD_FEN));
+        init(FenParser.load(START_BOARD_FEN));
     }
 
     public PlayerColor getCurrentPlayer() {

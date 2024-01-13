@@ -1,9 +1,9 @@
 package engine.piece;
 
 import engine.Board;
+import engine.Move;
 import engine.Position;
-import engine.move.Move;
-import engine.utils.FenUtils;
+import engine.utils.FenParser;
 import harness.JsonExportTestListener;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,19 +48,14 @@ public class AbstractPieceTest {
     }
 
     public void isMoveValid(String boardDef, String piece, String target, String description, boolean expected) {
-        Board board = FenUtils.load(boardDef);
-
-        // To make some tests pass
+        Board board = FenParser.load(boardDef);
 
         Position piecePos = Position.fromString(piece);
         Position targetPos = Position.fromString(target);
 
-
-        Move move = board.getMoveFor(piecePos, targetPos);
-
         JsonExportTestListener.registerTest(boardDef, piece, target, description, expected);
 
-        boolean actual = !(move instanceof Move.IllegalMove);
+        boolean actual = board.isMoveValid(new Move(piecePos, targetPos));
 
         assertThat(actual)
                 .as("Unexpected validity of move")

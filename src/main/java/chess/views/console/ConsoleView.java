@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class ConsoleView extends BaseView<String> {
 
     private static class StringResource implements DrawableResource<String> {
-        private String value;
+        private final String value;
 
         private StringResource(String value, PlayerColor color) {
             this.value = (color == PlayerColor.BLACK ? "\u001B[31m" : "") + value + "\u001B[30m";
@@ -25,8 +25,6 @@ public class ConsoleView extends BaseView<String> {
         }
     }
 
-    ;
-
     public static DrawableResource<String> createResource(String value, PlayerColor color) {
         return new StringResource(value, color);
     }
@@ -36,7 +34,7 @@ public class ConsoleView extends BaseView<String> {
     private final static String EMPTY_CELL = " ";
     private final static String UNKNOWN_CELL = "?";
 
-    private String checkMessage = "";
+    private final String checkMessage = "";
     private String[][] buffer;
 
     public ConsoleView(ChessController controller) {

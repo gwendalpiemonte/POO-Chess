@@ -2,12 +2,12 @@ package engine.piece;
 
 import chess.PieceType;
 import chess.PlayerColor;
-import engine.Board;
-import engine.Position;
-import engine.move.check.OrthogonalMove;
-import engine.move.Move;
+import engine.CardinalDirection;
+import engine.piece.traits.MoveListener;
 
-public class Rook extends Piece {
+import java.util.List;
+
+public class Rook extends SlidingPiece implements MoveListener {
 
     private boolean hasMoved;
 
@@ -16,23 +16,21 @@ public class Rook extends Piece {
         hasMoved = false;
     }
 
-    /**
-     * Marks the piece has having moved
-     */
-    public void setHasMoved() {
-        hasMoved = true;
+    public Rook(Piece promotedPiece) {
+        super(promotedPiece.getColor());
+    }
+
+    @Override
+    public List<CardinalDirection> allowedDirections() {
+        return CardinalDirection.ORTHOGONALS;
     }
 
     public boolean getHasMoved() {
         return hasMoved;
     }
 
-    public void resetHasMoved() {
-        hasMoved = false;
-    }
-
-    public Rook(Pawn pawn) {
-        super(pawn.getColor());
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
     }
 
     @Override
@@ -41,13 +39,7 @@ public class Rook extends Piece {
     }
 
     @Override
-    public Move getMoveFor(Board board, Position from, Position to) {
-        boolean isMoveValid = OrthogonalMove.isValid(board, getColor(), from, to);
-
-        if (!isMoveValid) {
-            return Move.illegal();
-        }
-
-        return Move.standard(from, to, b -> setHasMoved());
+    public void onMove() {
+        hasMoved = true;
     }
 }

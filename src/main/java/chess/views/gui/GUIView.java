@@ -24,7 +24,7 @@ public class GUIView extends BaseView<ImageIcon> {
 
     private static class PieceResource implements DrawableResource<ImageIcon> {
 
-        private ImageIcon icon;
+        private final ImageIcon icon;
 
         PieceResource(BufferedImage bufferedImage) {
             icon = new ImageIcon(bufferedImage);
@@ -37,7 +37,7 @@ public class GUIView extends BaseView<ImageIcon> {
     }
 
     private static class SwingChoiceWrapper<T extends UserChoice> {
-        private T object;
+        private final T object;
 
         SwingChoiceWrapper(T object) {
             this.object = object;
@@ -59,7 +59,7 @@ public class GUIView extends BaseView<ImageIcon> {
 
     //idea:https://stackoverflow.com/questions/21142686/making-a-robust-resizable-swing-chess-gui
     private final JPanel gui = new JPanel(new BorderLayout(3, 3));
-    private ChessSquare[][] chessBoardSquares = new ChessSquare[8][8];
+    private final ChessSquare[][] chessBoardSquares = new ChessSquare[8][8];
     private final JLabel headerLabel = new JLabel("Welcome to the HEIG-VD Chess game!");
     private static final String COLS = "ABCDEFGH";
     private final JLabel messageLabel = new JLabel("");
@@ -214,7 +214,7 @@ public class GUIView extends BaseView<ImageIcon> {
         chessBoard = new JPanel(new GridLayout(0, 9)) {
 
             @Override
-            public final Dimension getPreferredSize() {
+            public Dimension getPreferredSize() {
                 Dimension d = super.getPreferredSize();
                 Dimension prefSize;
                 Component c = getParent();

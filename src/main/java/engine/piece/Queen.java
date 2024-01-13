@@ -2,19 +2,18 @@ package engine.piece;
 
 import chess.PieceType;
 import chess.PlayerColor;
-import engine.Board;
-import engine.Position;
-import engine.move.check.DiagonalMove;
-import engine.move.check.OrthogonalMove;
-import engine.move.Move;
+import engine.CardinalDirection;
 
-public class Queen extends Piece {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Queen extends SlidingPiece {
     public Queen(PlayerColor color) {
         super(color);
     }
 
-    public Queen(Pawn pawn) {
-        super(pawn.getColor());
+    public Queen(Piece promotedPiece) {
+        super(promotedPiece.getColor());
     }
 
     @Override
@@ -23,14 +22,10 @@ public class Queen extends Piece {
     }
 
     @Override
-    public Move getMoveFor(Board board, Position from, Position to) {
-        boolean isMoveValid = DiagonalMove.isValid(board, getColor(), from, to)
-                || OrthogonalMove.isValid(board, getColor(), from, to);
+    public List<CardinalDirection> allowedDirections() {
+        List<CardinalDirection> directions = new ArrayList<>(CardinalDirection.DIAGONALS);
+        directions.addAll(CardinalDirection.ORTHOGONALS);
 
-        if (!isMoveValid) {
-            return Move.illegal();
-        }
-
-        return Move.standard(from, to);
+        return directions;
     }
 }

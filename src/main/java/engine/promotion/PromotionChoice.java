@@ -5,7 +5,7 @@ import chess.PieceType;
 import engine.piece.*;
 
 /**
- * Represents a pawn promotion to an other piece type the player makes
+ * Represents a pawn promotion to another piece type the player makes
  */
 public class PromotionChoice implements ChessView.UserChoice {
 
@@ -29,7 +29,7 @@ public class PromotionChoice implements ChessView.UserChoice {
      * @param pawn The pawn to promote
      * @return The new piece created from the pawn
      */
-    public Piece promote(Pawn pawn) {
+    public Piece promote(Piece pawn) {
         return switch (promotionPieceType) {
             // PAWN exists only to make check testing with promotion moves easier
             case PAWN -> pawn;
