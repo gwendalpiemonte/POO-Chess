@@ -6,23 +6,48 @@
 
 = Schéma de classes
 
-= Choix de conception
 
-Afin de faciliter les tests, ainsi que de rester autant que possible dans les standards, nous avons choisi de supporter le format FEN (Forsyth–Edwards Notation), écriture standard pour l'état d'un échequier sans stockage des mouvements. Ce choix a été effectué dès le début, et nous a été très utile pour tester le bon fonctionnement, comme expliqué dans la section *Tests* de ce rapport.
+== Architecture et choix d'implémentations
 
-Une autre fonctionnalité clef du programme est la class `engine.bitboard.Bitboard`. Comme présenté dans https://www.chessprogramming.org/Bitboards, qui permet de représenter certaines situations, tel que:
-- les mouvements autorisés pour les Tours
-- Tous les mouvements (pseudo-)légaux d'une pièce
-de facon plus succinte et efficiente.
+=== Bitboards
 
-= Tests
+Nous avons décider d'utiliser une approche faisant usage de bitboards #footnote[https://www.chessprogramming.org/Bitboards]. L'avantage de cette approche est qu'il nous est très facile, à l'aide des méthodes disponibles sur un `Bitboard` (and, or, xor, not), d'efféctuer des opérations pour déterminer les déplacements autorisés, les mises en échec, etc.
 
-Afin de faciliter le développement, et rendre plus faclile les modifications majeures du fonctionnemement du programme, des tests d'intégrations ont étés mis en place.
+=== FEN Notation
 
-Cela nous permet de s'assurer que le comportement de l'application est exactement celui attendu.
+Nous avons également décidé, dès le début du projet, d'implémenter un parser FEN #footnote[https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation]. Cela nous à permis de rapidement tester des positions de jeu, à la fois manuellement et automatiquement à l'aide de tests d'intégrations.
 
-La présentation dans ce rapport permet de plus facilement interpréter la notation FEN, qui peut être difficile a lire sans outil externe.
-Ces notations ont été intégralement générées à l'aide du site #link("https://lichess.org/editor")
+Le parser FEN est également utiliser pour initialiser la position par défaut en début de partie. Il est possible de facilement créer un FEN à l'aide d'outils numériques #footnote[https://lichess.org/editor]
+
+=== Structure générale 
+
+L'implémentation dans le package `engine` est structuré en plusieurs packages : 
+
+TODO
+
+=== Pièces
+
+Toutes les pièces concrètes héritent de la classe `Piece`. La classe `Piece` permet de factoriser au maximum le code pour chaques pièces, tel que la couleur ou encore les déplacements légaux de la pièce.
+
+Chaques classes de pièce concret (`King`, `Queen`, `Knight`, `Bishop`, `Rook`, `Pawn`) possède donc une méthode `getMoves` permettant, pour chaque classe, d'implémenter la logique de mouvement propre à ce type de pièce.
+
+=== Board
+
+La classe `Board` gère l'état de la partie. C'est cette classe qui est utilisée dans la classe `ChessGame` mis à disposition pour encapsuler la logique de jeu.
+
+Le `Board` implémente l'interface `Cloneable`, cela permet de facilement vérifier qu'un déplacement n'engendrerait pas un échec.
+
+=== FenParser
+
+La classe `FenParser` permet l'utilisation de la notation FEN. Elle est utilisée dans les tests et pour définir la position par défaut d'une partie.
+
+=== Position
+
+La classe `Position` permet de stocker la position d'une case sur l'échiquier. Elle est également utilisée pour convertir une position String tel que `"a4"` dans le format utilisé par le `Board`.
+
+=== PromotionChoice
+
+La classe `PromotionChoice` implémente l'interface `ChessView.UserChoice`. Cette classe permet de promouvoir un pion vers le type de pièce sélectionné.
 
 == Interprétation
 
@@ -34,7 +59,7 @@ Ces notations ont été intégralement générées à l'aide du site #link("http
   }))
 }
 
-#grid(columns: (auto, 1fr), gutter: 10pt,
+#grid(columns: (auto, 1fr), gutter: 14pt,
   fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
   ", size: 16pt),
   [
@@ -53,13 +78,34 @@ Ces notations ont été intégralement générées à l'aide du site #link("http
 == Tests
 
 #{
-  let elements = json("./generated/tests-output.json")
+  let elements = json("tests-output.json")
+  
+  let grouped_elements = elements.fold(("ignore": ()), (acc, item) => {
+    if acc.at(item.testCase, default: ()) == () {
+      acc.insert(item.testCase, ())
+    }
+    acc.at(item.testCase).push(item);
+    acc
+  })
 
-  for element in elements {
-    test(element.fen, from: element.from, to: element.to, element.description, valid: element.valid, name: element.testCase)
+  let content = []
+  
+  for (key, value) in grouped_elements {
+    if key == "ignore" {
+      continue
+    }
+  
+    content += block()[
+      === #key
+      
+      #value.map(element => {
+            test(element.fen, from: element.from, to: element.to, element.description, valid: element.valid, name: element.testCase)
+        }).join()
+    ] 
   }
-}
 
+  content
+}
 
 == Code source
 
